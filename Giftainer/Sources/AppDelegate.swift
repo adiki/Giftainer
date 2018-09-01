@@ -12,10 +12,24 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    private var appFlowCoordinator: AppFlowCoordinator?
 
-
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {        
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        setupAppFlowCoordinator()
+        
         return true
+    }
+    
+    private func setupAppFlowCoordinator() {
+        let frame = UIScreen.main.bounds
+        let window = UIWindow(frame: frame)
+        window.backgroundColor = .white
+        self.window = window
+        let appFlowCoordinator = AppFlowCoordinator.makeAppFlowCoordinator()
+        self.appFlowCoordinator = appFlowCoordinator
+        window.rootViewController = appFlowCoordinator.rootViewController
+        window.makeKeyAndVisible()
     }
 }
 
