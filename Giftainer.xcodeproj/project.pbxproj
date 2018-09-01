@@ -15,6 +15,8 @@
 		2C4DBE67213AEC69007D2ECB /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4DBE66213AEC69007D2ECB /* UIFont+Extensions.swift */; };
 		2C4DBE6D213AFAD9007D2ECB /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4DBE6C213AFAD9007D2ECB /* Layout.swift */; };
 		2C4DBE6F213AFC97007D2ECB /* FlowCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C4DBE6E213AFC97007D2ECB /* FlowCollectionView.swift */; };
+		2C4DBE78213B0400007D2ECB /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C4DBE70213B03CB007D2ECB /* RxCocoa.framework */; };
+		2C4DBE79213B0400007D2ECB /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C4DBE71213B03CB007D2ECB /* RxSwift.framework */; };
 		2CCD7BD0213ADA9A002299F1 /* ViewControllersFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD7BCF213ADA9A002299F1 /* ViewControllersFactory.swift */; };
 		2CCD7BD3213ADAC3002299F1 /* FeedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD7BD2213ADAC3002299F1 /* FeedViewController.swift */; };
 		2CCD7BD5213ADAD5002299F1 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCD7BD4213ADAD5002299F1 /* FeedView.swift */; };
@@ -35,6 +37,8 @@
 		2C4DBE66213AEC69007D2ECB /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		2C4DBE6C213AFAD9007D2ECB /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		2C4DBE6E213AFC97007D2ECB /* FlowCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlowCollectionView.swift; sourceTree = "<group>"; };
+		2C4DBE70213B03CB007D2ECB /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
+		2C4DBE71213B03CB007D2ECB /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		2CCD7BCF213ADA9A002299F1 /* ViewControllersFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewControllersFactory.swift; sourceTree = "<group>"; };
 		2CCD7BD2213ADAC3002299F1 /* FeedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedViewController.swift; sourceTree = "<group>"; };
 		2CCD7BD4213ADAD5002299F1 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
@@ -49,6 +53,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C4DBE78213B0400007D2ECB /* RxCocoa.framework in Frameworks */,
+				2C4DBE79213B0400007D2ECB /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -58,8 +64,11 @@
 		2C3B9F19213ACA9E006A4004 = {
 			isa = PBXGroup;
 			children = (
+				2C4DBE70213B03CB007D2ECB /* RxCocoa.framework */,
+				2C4DBE71213B03CB007D2ECB /* RxSwift.framework */,
 				2C3B9F24213ACA9E006A4004 /* Giftainer */,
 				2C3B9F23213ACA9E006A4004 /* Products */,
+				2C4DBE77213B0400007D2ECB /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -129,6 +138,13 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		2C4DBE77213B0400007D2ECB /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2CCD7BD1213ADAB3002299F1 /* Feed */ = {
 			isa = PBXGroup;
 			children = (
@@ -176,6 +192,7 @@
 				2C3B9F1E213ACA9E006A4004 /* Sources */,
 				2C3B9F1F213ACA9E006A4004 /* Frameworks */,
 				2C3B9F20213ACA9E006A4004 /* Resources */,
+				2C4DBE7A213B0419007D2ECB /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -231,6 +248,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		2C4DBE7A213B0419007D2ECB /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+			);
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		2C3B9F1E213ACA9E006A4004 /* Sources */ = {
@@ -394,6 +431,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QCC3KN6M4D;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Giftainer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -412,6 +453,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = QCC3KN6M4D;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Giftainer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

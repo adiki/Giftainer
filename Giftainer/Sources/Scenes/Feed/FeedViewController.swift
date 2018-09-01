@@ -6,11 +6,19 @@
 //  Copyright © 2018 MobileSolutions. All rights reserved.
 //
 
+import RxCocoa
+import RxSwift
 import UIKit
 
 class FeedViewController: UIViewController {
     
-    let searchBar = UISearchBar()
+    private let searchBar = UISearchBar()
+    
+    let disposeBag = DisposeBag()
+    
+    private var feedView: FeedView {
+        return view as! FeedView
+    }
     
     override func loadView() {
         view = FeedView()
@@ -18,13 +26,20 @@ class FeedViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
-        title = .Giftainer
         
         searchBar.placeholder = .Search
         searchBar.tintColor = .white
         searchBar.delegate = self
         navigationItem.titleView = searchBar
+        
+        let tapGestureRecognizer = UITapGestureRecognizer()
+        feedView.addGestureRecognizer(tapGestureRecognizer)
+        tapGestureRecognizer.rx.event
+            .asDriver()
+            .drive(onNext: { [searchBar] _ in
+                searchBar.resignFirstResponder()
+            })
+            .disposed(by: disposeBag)
     }
 }
 

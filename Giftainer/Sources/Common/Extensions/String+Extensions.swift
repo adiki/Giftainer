@@ -10,7 +10,6 @@ import Foundation
 
 extension String {
     
-    static let Giftainer = "Giftainer"
     static let Search = localize("Search")
     
     static func localize(_ string: String) -> String {
