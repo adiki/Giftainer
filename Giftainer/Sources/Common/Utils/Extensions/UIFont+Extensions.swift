@@ -9,6 +9,11 @@
 import UIKit
 
 extension UIFont {
+        
+    static func appMediumFont(ofSize size: CGFloat) -> UIFont {
+        let boldFont = UIFont(name: "HelveticaNeue-Medium", size: size)!
+        return UIFontMetrics.default.scaledFont(for: boldFont)
+    }
 
     static func appBoldFont(ofSize size: CGFloat) -> UIFont {
         let boldFont = UIFont(name: "HelveticaNeue-Bold", size: size)!

@@ -22,14 +22,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func setupAppFlowCoordinator() {
-        let frame = UIScreen.main.bounds
-        let window = UIWindow(frame: frame)
-        window.backgroundColor = .white
-        self.window = window
-        let appFlowCoordinator = AppFlowCoordinator.makeAppFlowCoordinator()
-        self.appFlowCoordinator = appFlowCoordinator
-        window.rootViewController = appFlowCoordinator.rootViewController
-        window.makeKeyAndVisible()
+        AppFlowCoordinator.makeAppFlowCoordinator { appFlowCoordinator in
+            let frame = UIScreen.main.bounds
+            let window = UIWindow(frame: frame)
+            window.backgroundColor = .white
+            self.window = window
+            self.appFlowCoordinator = appFlowCoordinator
+            window.rootViewController = appFlowCoordinator.rootViewController
+            window.makeKeyAndVisible()
+        }
     }
 }
 

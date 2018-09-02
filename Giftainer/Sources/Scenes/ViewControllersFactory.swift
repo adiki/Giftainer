@@ -10,7 +10,14 @@ import Foundation
 
 class ViewControllersFactory {
     
+    private let viewModelsFactory: ViewModelsFactory
+    
+    init(viewModelsFactory: ViewModelsFactory) {
+        self.viewModelsFactory = viewModelsFactory
+    }
+    
     func makeFeedViewController() -> FeedViewController {
-        return FeedViewController()
+        let feedViewModel = viewModelsFactory.makeFeedViewModel()
+        return FeedViewController(feedViewModel: feedViewModel)
     }
 }

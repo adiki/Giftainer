@@ -24,8 +24,12 @@ class AppFlowCoordinator: FlowCoordinator {
         navigationController.navigationBar.isTranslucent = true
     }
     
-    static func makeAppFlowCoordinator() -> AppFlowCoordinator {
-        let viewControllersFactory = ViewControllersFactory()
-        return AppFlowCoordinator(viewControllersFactory: viewControllersFactory)
+    static func makeAppFlowCoordinator(completion: @escaping (AppFlowCoordinator) -> Void) {
+        CoreDataManager.makePersistencyManager { persistencyManager in
+            let viewModelsFactory = ViewModelsFactory(persistencyManager: persistencyManager)
+            let viewControllersFactory = ViewControllersFactory(viewModelsFactory: viewModelsFactory)
+            let appFlowCoordinator = AppFlowCoordinator(viewControllersFactory: viewControllersFactory)
+            completion(appFlowCoordinator)
+        }
     }
 }

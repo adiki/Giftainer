@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14135" systemVersion="17G65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="GIF" representedClassName=".CDGIF" syncable="YES">
+        <relationship name="keywords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Keyword" inverseName="gifs" inverseEntity="Keyword" syncable="YES"/>
+    </entity>
+    <entity name="Keyword" representedClassName=".CDKeyword" syncable="YES">
+        <relationship name="gifs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GIF" inverseName="keywords" inverseEntity="GIF" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="GIF" positionX="-63" positionY="-18" width="128" height="60"/>
+        <element name="Keyword" positionX="-54" positionY="-9" width="128" height="60"/>
+    </elements>
+</model>

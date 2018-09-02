@@ -53,6 +53,10 @@ func pinAllEdges() -> [Constraint] {
     return equal(\.topAnchor) + equal(\.bottomAnchor) + equal(\.leadingAnchor) + equal(\.trailingAnchor)
 }
 
+func pinToCenter() -> [Constraint] {
+    return equal(\.centerXAnchor) + equal(\.centerYAnchor)
+}
+
 extension UIView {
     func addSubview(_ child: UIView, constraints: [[Constraint]]) {
         addSubview(child)
