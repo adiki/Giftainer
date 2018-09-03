@@ -14,13 +14,27 @@ class FeedViewModel {
     
     let gifsProvider: AnyObjectsProvider<GIF>
     
-    let isNoGIFsInfoHidden: Observable<Bool>    
- 
+    let searchText: Observable<String>
+    let isNoGIFsInfoHidden: Observable<Bool>
+    
+    private let searchTextBehaviorRelay: BehaviorRelay<String>
     private let persistencyManager: PersistencyManager
+    private let disposeBag = DisposeBag()
     
     init(persistencyManager: PersistencyManager) {
         self.persistencyManager = persistencyManager
         gifsProvider = persistencyManager.makeGIFsProvider()
-        isNoGIFsInfoHidden = gifsProvider.numberOfObjects.map { $0 > 0 }
+        let searchTextBehaviorRelay = BehaviorRelay(value: "")
+        self.searchTextBehaviorRelay = searchTextBehaviorRelay
+        searchText = searchTextBehaviorRelay.asObservable()
+        isNoGIFsInfoHidden = Observable
+            .combineLatest(gifsProvider.numberOfObjects, searchText)
+            .map { $0 > 0 || !$1.isEmpty }        
+    }
+    
+    func accept<Observable: ObservableType>(searchInput: Observable) where Observable.E == String {
+        searchInput
+            .bind(to: searchTextBehaviorRelay)
+            .disposed(by: disposeBag)
     }
 }

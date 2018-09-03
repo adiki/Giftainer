@@ -43,6 +43,7 @@ class FeedViewController: UIViewController {
         setupSearchBar()
         setupClosingKeyboardOnTap()
         setupKeyboardNotifications()
+        setupNoGIFsLabel()
     }
     
     private func setupSearchBar() {
@@ -50,6 +51,8 @@ class FeedViewController: UIViewController {
         searchBar.tintColor = .white
         searchBar.delegate = self
         navigationItem.titleView = searchBar
+        
+        feedViewModel.accept(searchInput: searchBar.rx.text.orEmpty)
     }
     
     private func setupClosingKeyboardOnTap() {
@@ -62,7 +65,6 @@ class FeedViewController: UIViewController {
             })
             .disposed(by: disposeBag)
     }
-    
     
     private func setupKeyboardNotifications() {
         tokens.append(NotificationCenter.default.addObserver { [weak self] (notification: KeyboardWillShowNotification) in
@@ -78,6 +80,13 @@ class FeedViewController: UIViewController {
                 self?.feedView.layoutIfNeeded()
             }).startAnimation()
         })
+    }
+    
+    private func setupNoGIFsLabel() {
+        feedViewModel.isNoGIFsInfoHidden
+            .observeOn(MainScheduler.instance)
+            .bind(to: feedView.noGIFsLabel.rx.isHidden)
+            .disposed(by: disposeBag)
     }
 }
 
