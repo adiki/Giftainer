@@ -10,7 +10,7 @@ import Foundation
 
 protocol PersistencyManager {
     
-    func makeGIFsProvider() -> ObjectsProvider<GIF>
+    func makeGIFsProvider() -> AnyObjectsProvider<GIF>
     
     static func makePersistencyManager(completion: @escaping (PersistencyManager) -> Void)
 }

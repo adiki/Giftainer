@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-class CoreDataManager: PersistencyManager {
+class CoreDataManager: PersistencyManager {    
     
     private let persistentContainer: NSPersistentContainer
     private let mainContext: NSManagedObjectContext
@@ -25,15 +25,15 @@ class CoreDataManager: PersistencyManager {
         setupContextNotificationObserving()
     }
     
-    func makeGIFsProvider() -> ObjectsProvider<GIF> {
+    func makeGIFsProvider() -> AnyObjectsProvider<GIF> {
         let request = CDGIF.sortedFetchRequest
         request.returnsObjectsAsFaults = false
         request.fetchBatchSize = 30
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
-                                                               managedObjectContext: mainContext,
-                                                               sectionNameKeyPath: nil,
-                                                               cacheName: nil)
-        return CoreDataObjectsProvider(fetchedResultsController: fetchedResultsController)
+                                                                  managedObjectContext: mainContext,
+                                                                  sectionNameKeyPath: nil,
+                                                                  cacheName: nil)
+        return AnyObjectsProvider(objectsProvider: CoreDataObjectsProvider(fetchedResultsController: fetchedResultsController))
     }
     
     private func setupQueryGenerations() {

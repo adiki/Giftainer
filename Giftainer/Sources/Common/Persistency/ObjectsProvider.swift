@@ -9,18 +9,12 @@
 import Foundation
 import RxSwift
 
-class ObjectsProvider<Object>: NSObject {
+protocol ObjectsProvider {
     
-    let numberOfObjects: Observable<Int>
-    let updates: Observable<[Update<Object>]>
+    associatedtype Object
     
-    init(numberOfObjects: Observable<Int>,
-                  updates: Observable<[Update<Object>]>) {
-        self.numberOfObjects = numberOfObjects
-        self.updates = updates
-    }
+    var numberOfObjects: Observable<Int> { get }
+    var updates: Observable<[Update<Object>]> { get }
     
-    func object(at indexPath: IndexPath) -> Object {
-        fatalError("This is abstract class")
-    }
+    func object(at indexPath: IndexPath) -> Object
 }

@@ -12,7 +12,7 @@ import RxSwift
 
 class FeedViewModel {
     
-    let gifsProvider: ObjectsProvider<GIF>
+    let gifsProvider: AnyObjectsProvider<GIF>
     
     let isNoGIFsInfoHidden: Observable<Bool>    
  

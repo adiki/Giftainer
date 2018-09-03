@@ -11,12 +11,13 @@ import Foundation
 import RxCocoa
 import RxSwift
 
-class CoreDataObjectsProvider<CoreDataObject: Convertible>: ObjectsProvider<CoreDataObject.ConvertedType>, NSFetchedResultsControllerDelegate where CoreDataObject: NSFetchRequestResult {
+class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsProvider, NSFetchedResultsControllerDelegate where CoreDataObject: NSFetchRequestResult {
     
-    typealias Object = CoreDataObject.ConvertedType
+    let numberOfObjects: Observable<Int>
+    let updates: Observable<[Update<CoreDataObject.ConvertedType>]>
     
     private let numberOfObjectsBehaviorRelay: BehaviorRelay<Int>
-    private let updatesPublishSubject = PublishSubject<[Update<Object>]>()
+    private let updatesPublishSubject = PublishSubject<[Update<CoreDataObject.ConvertedType>]>()
     private let fetchedResultsController: NSFetchedResultsController<CoreDataObject>
     
     private var updatesList: [Update<Object>] = []
@@ -25,15 +26,18 @@ class CoreDataObjectsProvider<CoreDataObject: Convertible>: ObjectsProvider<Core
         self.fetchedResultsController = fetchedResultsController
         try! fetchedResultsController.performFetch()
         let numberOfObjects = fetchedResultsController.sections?[0].numberOfObjects ?? 0
-        numberOfObjectsBehaviorRelay = BehaviorRelay(value: numberOfObjects)
+        let numberOfObjectsBehaviorRelay = BehaviorRelay(value: numberOfObjects)
+        self.numberOfObjectsBehaviorRelay = numberOfObjectsBehaviorRelay
+        self.numberOfObjects = numberOfObjectsBehaviorRelay.asObservable()
+        updates = updatesPublishSubject.asObservable()
+
         
-        super.init(numberOfObjects: numberOfObjectsBehaviorRelay.asObservable(),
-                   updates: updatesPublishSubject.asObservable())
+        super.init()
         
         fetchedResultsController.delegate = self
     }
     
-    func objectAtIndexPath(_ indexPath: IndexPath) -> Object {
+    func object(at indexPath: IndexPath) -> CoreDataObject.ConvertedType {
         return fetchedResultsController.object(at: indexPath).convert()
     }
     
@@ -48,8 +52,8 @@ class CoreDataObjectsProvider<CoreDataObject: Convertible>: ObjectsProvider<Core
             updatesList.append(.insert(newIndexPath))
         case .update:
             guard let newIndexPath = newIndexPath else { fatalError("Index path should be not nil") }
-            let object = objectAtIndexPath(newIndexPath)
-            updatesList.append(.update(newIndexPath, object))
+            let obj = object(at: newIndexPath)
+            updatesList.append(.update(newIndexPath, obj))
         case .move:
             guard let indexPath = indexPath else { fatalError("Index path should be not nil") }
             guard let newIndexPath = newIndexPath else { fatalError("New index path should be not nil") }

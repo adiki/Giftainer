@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C1EAC25213D8DC90029B24D /* AnyObjectsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1EAC24213D8DC90029B24D /* AnyObjectsProvider.swift */; };
 		2C3B9F26213ACA9E006A4004 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C3B9F25213ACA9E006A4004 /* AppDelegate.swift */; };
 		2C3B9F2D213ACA9F006A4004 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2C3B9F2C213ACA9F006A4004 /* Assets.xcassets */; };
 		2C3B9F30213ACA9F006A4004 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2C3B9F2E213ACA9F006A4004 /* LaunchScreen.storyboard */; };
@@ -49,6 +50,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C1EAC24213D8DC90029B24D /* AnyObjectsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyObjectsProvider.swift; sourceTree = "<group>"; };
 		2C3B9F22213ACA9E006A4004 /* Giftainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Giftainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2C3B9F25213ACA9E006A4004 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2C3B9F2C213ACA9F006A4004 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				2CB98501213C28DB00AD3CF3 /* CoreData */,
+				2C1EAC24213D8DC90029B24D /* AnyObjectsProvider.swift */,
 				2CB984FD213C285E00AD3CF3 /* ObjectsProvider.swift */,
 				2CB98506213C352A00AD3CF3 /* PersistencyManager.swift */,
 			);
@@ -420,6 +423,7 @@
 				2CB9851F213C435A00AD3CF3 /* GIF.swift in Sources */,
 				2CCD7BDA213ADC01002299F1 /* AppFlowCoordinator.swift in Sources */,
 				2CB98523213C465E00AD3CF3 /* Managed.swift in Sources */,
+				2C1EAC25213D8DC90029B24D /* AnyObjectsProvider.swift in Sources */,
 				2C4DBE67213AEC69007D2ECB /* UIFont+Extensions.swift in Sources */,
 				2CCD7BD0213ADA9A002299F1 /* ViewControllersFactory.swift in Sources */,
 			);
