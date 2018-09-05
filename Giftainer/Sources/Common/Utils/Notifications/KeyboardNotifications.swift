@@ -12,10 +12,10 @@ import UIKit
 protocol KeyboardNotification {
     
     var duration: TimeInterval { get set }
-    var animationOptions: UIViewAnimationOptions  { get set }
+    var animationOptions: UIViewAnimationOptions { get set }
     var endFrame: CGRect { get set }
     
-    var userInfo: [AnyHashable : Any]? { get }
+    var userInfo: [AnyHashable: Any]? { get }
     
     init()
     init(notification: Notification)
@@ -23,7 +23,7 @@ protocol KeyboardNotification {
 
 extension KeyboardNotification {
     
-    var userInfo: [AnyHashable : Any]? {
+    var userInfo: [AnyHashable: Any]? {
         return nil
     }
     

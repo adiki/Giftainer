@@ -9,7 +9,7 @@
 import Foundation
 import CoreData
 
-class CoreDataManager: PersistencyManager {    
+class CoreDataManager: ObjectsManager {    
     
     private let persistentContainer: NSPersistentContainer
     private let mainContext: NSManagedObjectContext
@@ -27,13 +27,22 @@ class CoreDataManager: PersistencyManager {
     
     func makeGIFsProvider() -> AnyObjectsProvider<GIF> {
         let request = CDGIF.sortedFetchRequest
-        request.returnsObjectsAsFaults = false
-        request.fetchBatchSize = 30
+        setup(fetchRequest: request)
+        let coreDataObjectsProvider = makeObjectsProvider(with: request)
+        return AnyObjectsProvider(objectsProvider: coreDataObjectsProvider)
+    }
+    
+    private func setup<Result: NSFetchRequestResult>(fetchRequest: NSFetchRequest<Result>) {
+        fetchRequest.returnsObjectsAsFaults = false
+        fetchRequest.fetchBatchSize = 30
+    }
+    
+    private func makeObjectsProvider<T: Convertible>(with request: NSFetchRequest<T>) -> CoreDataObjectsProvider<T> {
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
                                                                   managedObjectContext: mainContext,
                                                                   sectionNameKeyPath: nil,
                                                                   cacheName: nil)
-        return AnyObjectsProvider(objectsProvider: CoreDataObjectsProvider(fetchedResultsController: fetchedResultsController))
+        return CoreDataObjectsProvider(fetchedResultsController: fetchedResultsController)
     }
     
     private func setupQueryGenerations() {
@@ -52,18 +61,18 @@ class CoreDataManager: PersistencyManager {
         })
     }
     
-    static func makePersistencyManager(completion: @escaping (PersistencyManager) -> Void) {
+    static func makeObjectsManager(completion: @escaping (ObjectsManager) -> Void) {
         let persistentContainer = NSPersistentContainer(name: "Giftainer", managedObjectModel: managedObjectModel)
         let storeURL = URL.documents.appendingPathComponent("Giftainer.giftainer")
         let storeDescription = NSPersistentStoreDescription(url: storeURL)
-        storeDescription.shouldMigrateStoreAutomatically = false
+        storeDescription.shouldMigrateStoreAutomatically = true
         persistentContainer.persistentStoreDescriptions = [storeDescription]
         persistentContainer.loadPersistentStores { _, error in
             if let error = error {
                 fatalError("\(error)")
             } else {
                 let coreDataManager = CoreDataManager(persistentContainer: persistentContainer)
-                DispatchQueue.main.async { completion(coreDataManager) }
+                completion(coreDataManager)
             }
         }
     }

@@ -8,6 +8,7 @@
 
 import UIKit
 
+//This class uses template method to reduce boilerplate code when defining views
 class View: UIView {
     
     init() {

@@ -12,18 +12,9 @@ extension String {
     
     static let Search = localize("Search")
     static let Your_search_history_appear_here = localize("Your_search_history_appear_here")
+    static let No_results_found = localize("No_results_found")
     
     static func localize(_ string: String) -> String {
         return NSLocalizedString(string, tableName: nil, comment: "")
-    }
-    
-    func removingCharacters(in set: CharacterSet) -> String {
-        var chars = self
-        for idx in chars.indices.reversed() {
-            if set.contains(String(chars[idx]).unicodeScalars.first!) {
-                chars.remove(at: idx)
-            }
-        }
-        return String(chars)
     }
 }

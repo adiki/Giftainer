@@ -12,11 +12,10 @@ import UIKit
 
 class FeedViewController: UIViewController {
     
-    private let searchBar = UISearchBar()
-    
-    private var tokens: [NotificationToken] = []
-    
     let disposeBag = DisposeBag()
+    
+    private let searchBar = UISearchBar()
+    private let tokensBag = TokensBag()
     
     private var feedView: FeedView {
         return view as! FeedView
@@ -41,9 +40,11 @@ class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSearchBar()
-        setupClosingKeyboardOnTap()
-        setupKeyboardNotifications()
         setupNoGIFsLabel()
+        setupNoResultsLabel()
+        setupActivityIndicator()
+        setupKeyboardNotifications()
+        setupClosingKeyboardOnTap()
     }
     
     private func setupSearchBar() {
@@ -53,6 +54,30 @@ class FeedViewController: UIViewController {
         navigationItem.titleView = searchBar
         
         feedViewModel.accept(searchInput: searchBar.rx.text.orEmpty)
+        feedViewModel.searchText
+            .bind(to: searchBar.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    private func setupNoGIFsLabel() {
+        feedViewModel.isNoGIFsInfoHidden
+            .observeOn(MainScheduler.instance)
+            .bind(to: feedView.noGIFsLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+    }
+    
+    private func setupNoResultsLabel() {
+        feedViewModel.isNoResultsInfoHidden
+            .observeOn(MainScheduler.instance)
+            .bind(to: feedView.noResultsFoundLabel.rx.isHidden)
+            .disposed(by: disposeBag)
+    }
+    
+    private func setupActivityIndicator() {
+        feedViewModel.isActivityInProgress
+            .observeOn(MainScheduler.instance)
+            .bind(to: feedView.activityIndicator.rx.isAnimating)
+            .disposed(by: disposeBag)
     }
     
     private func setupClosingKeyboardOnTap() {
@@ -67,26 +92,23 @@ class FeedViewController: UIViewController {
     }
     
     private func setupKeyboardNotifications() {
-        tokens.append(NotificationCenter.default.addObserver { [weak self] (notification: KeyboardWillShowNotification) in
-            self?.feedView.flowCollectionViewBottomConstraint?.constant = -notification.endFrame.height
-            UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
-                self?.feedView.layoutIfNeeded()
-            }).startAnimation()
-        })
+        NotificationCenter.default
+            .addObserver { [weak self] (notification: KeyboardWillShowNotification) in
+                self?.feedView.flowCollectionViewBottomConstraint?.constant = -notification.endFrame.height
+                UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
+                    self?.feedView.layoutIfNeeded()
+                }).startAnimation()
+            }
+            .disposed(by: tokensBag)
         
-        tokens.append(NotificationCenter.default.addObserver { [weak self] (notification: KeyboardWillHideNotification) in
-            self?.feedView.flowCollectionViewBottomConstraint?.constant = 0
-            UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
-                self?.feedView.layoutIfNeeded()
-            }).startAnimation()
-        })
-    }
-    
-    private func setupNoGIFsLabel() {
-        feedViewModel.isNoGIFsInfoHidden
-            .observeOn(MainScheduler.instance)
-            .bind(to: feedView.noGIFsLabel.rx.isHidden)
-            .disposed(by: disposeBag)
+        NotificationCenter.default
+            .addObserver { [weak self] (notification: KeyboardWillHideNotification) in
+                self?.feedView.flowCollectionViewBottomConstraint?.constant = 0
+                UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
+                    self?.feedView.layoutIfNeeded()
+                }).startAnimation()
+            }
+            .disposed(by: tokensBag)
     }
 }
 

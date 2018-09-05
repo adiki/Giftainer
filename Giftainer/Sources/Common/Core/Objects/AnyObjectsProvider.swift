@@ -12,19 +12,16 @@ import RxSwift
 //This class uses Type Erasure, it's a useful technique when working with protocols with associatedtype
 class AnyObjectsProvider<T>: ObjectsProvider {
     
-    private let _updates: Observable<[Update<T>]>
-    private let _object: (IndexPath) -> T
-    
     let numberOfObjects: Observable<Int>
-    var updates: Observable<[Update<T>]> {
-        return _updates
-    }
+    let updates: Observable<[Update<T>]>    
     
     init<OP: ObjectsProvider>(objectsProvider: OP) where OP.Object == T {
         numberOfObjects = objectsProvider.numberOfObjects
-        _updates = objectsProvider.updates
+        updates = objectsProvider.updates
         _object = objectsProvider.object(at:)
     }
+    
+    private let _object: (IndexPath) -> T
     
     func object(at indexPath: IndexPath) -> T {
         return _object(indexPath)

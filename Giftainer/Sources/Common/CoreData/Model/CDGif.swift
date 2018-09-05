@@ -9,8 +9,7 @@
 import Foundation
 import CoreData
 
-class CDGIF: NSManagedObject {
-    
+class CDGIF: NSManagedObject {    
 }
 
 extension CDGIF: Convertible {    

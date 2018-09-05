@@ -25,12 +25,10 @@ class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsPro
     init(fetchedResultsController: NSFetchedResultsController<CoreDataObject>) {
         self.fetchedResultsController = fetchedResultsController
         try! fetchedResultsController.performFetch()
-        let numberOfObjects = fetchedResultsController.sections?[0].numberOfObjects ?? 0
-        let numberOfObjectsBehaviorRelay = BehaviorRelay(value: numberOfObjects)
+        let numberOfObjectsBehaviorRelay = BehaviorRelay(value: fetchedResultsController.numberOfObjects)
         self.numberOfObjectsBehaviorRelay = numberOfObjectsBehaviorRelay
-        self.numberOfObjects = numberOfObjectsBehaviorRelay.asObservable()
+        numberOfObjects = numberOfObjectsBehaviorRelay.asObservable()
         updates = updatesPublishSubject.asObservable()
-
         
         super.init()
         
@@ -66,5 +64,7 @@ class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsPro
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         updatesPublishSubject.onNext(updatesList)
+        let numberOfObjects = fetchedResultsController.numberOfObjects
+        numberOfObjectsBehaviorRelay.accept(numberOfObjects)
     }
 }

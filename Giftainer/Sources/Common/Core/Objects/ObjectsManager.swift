@@ -1,5 +1,5 @@
 //
-//  PersistencyManager.swift
+//  ObjectsManager.swift
 //  Giftainer
 //
 //  Created by Adrian Śliwa on 02/09/2018.
@@ -8,9 +8,9 @@
 
 import Foundation
 
-protocol PersistencyManager {
+protocol ObjectsManager {
     
     func makeGIFsProvider() -> AnyObjectsProvider<GIF>
     
-    static func makePersistencyManager(completion: @escaping (PersistencyManager) -> Void)
+    static func makeObjectsManager(completion: @escaping (ObjectsManager) -> Void)
 }

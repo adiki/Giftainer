@@ -10,13 +10,15 @@ import Foundation
 
 class ViewModelsFactory {
     
-    let persistencyManager: PersistencyManager
+    let gifsManager = GIFsManager()
+    let objectsManager: ObjectsManager
     
-    init(persistencyManager: PersistencyManager) {
-        self.persistencyManager = persistencyManager
+    init(objectsManager: ObjectsManager) {
+        self.objectsManager = objectsManager
     }
  
     func makeFeedViewModel() -> FeedViewModel {
-        return FeedViewModel(persistencyManager: persistencyManager)
+        return FeedViewModel(gifsManager: gifsManager,
+                             objectsManager: objectsManager)
     }
 }

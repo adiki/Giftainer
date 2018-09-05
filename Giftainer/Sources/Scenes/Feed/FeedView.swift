@@ -11,9 +11,11 @@ import UIKit
 class FeedView: View {
     
     let flowCollectionView = FlowCollectionView()
-    var flowCollectionViewBottomConstraint: NSLayoutConstraint?
+    private(set) var flowCollectionViewBottomConstraint: NSLayoutConstraint?
     let noGIFsLabel = UILabel()
-    var noGIFsLabelCenterYConstraint: NSLayoutConstraint?
+    let noResultsFoundLabel = UILabel()
+    private(set) var noGIFsLabelCenterYConstraint: NSLayoutConstraint?
+    let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -22,12 +24,13 @@ class FeedView: View {
     }
     
     override func setupBackground() {
-        backgroundColor = UIColor.snapperRocksBlue.withAlphaComponent(0.8)
+        backgroundColor = .lightSnapperRocksBlue
     }
     
     override func setupSubviews() {
         setupFlowCollectionView()
         setupNoGIFsLabel()
+        setupNoResultsFoundLabel()
     }
     
     private func setupFlowCollectionView() {
@@ -38,7 +41,19 @@ class FeedView: View {
     
     private func setupNoGIFsLabel() {
         noGIFsLabel.text = .Your_search_history_appear_here
-        noGIFsLabel.font = .appMediumFont(ofSize: 17)
+        setup(infoLabel: noGIFsLabel)
+    }
+    
+    private func setupNoResultsFoundLabel() {
+        noResultsFoundLabel.text = .No_results_found
+        setup(infoLabel: noResultsFoundLabel)
+    }
+    
+    private func setup(infoLabel: UILabel) {
+        infoLabel.font = .appMediumFont(ofSize: 18)
+        infoLabel.textColor = .white
+        infoLabel.numberOfLines = 0
+        infoLabel.textAlignment = .center
     }
     
     override func addSubviews() {
@@ -46,7 +61,12 @@ class FeedView: View {
                    constraints: [pinAllEdges()])
         flowCollectionViewBottomConstraint = flowCollectionView.constraint(for: flowCollectionView.bottomAnchor)
         flowCollectionView.addSubview(noGIFsLabel,
-                                      constraints: [pinToCenter()])
+                                      constraints: [pinToCenter(),
+                                                    equal(\.widthAnchor, multiplier: 0.9)])
         noGIFsLabelCenterYConstraint = noGIFsLabel.constraint(for: noGIFsLabel.centerYAnchor)
+        flowCollectionView.addSubview(noResultsFoundLabel,
+                                      constraints: [pinToCenter(of: noGIFsLabel)])
+        flowCollectionView.addSubview(activityIndicator,
+                                      constraints: [pinToCenter(of: noGIFsLabel)])
     }
 }

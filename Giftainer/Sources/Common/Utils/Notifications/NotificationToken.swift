@@ -12,6 +12,7 @@ class NotificationToken {
     
     let token: NSObjectProtocol
     let center: NotificationCenter
+    
     init(token: NSObjectProtocol, center: NotificationCenter) {
         self.token = token
         self.center = center
@@ -19,5 +20,9 @@ class NotificationToken {
     
     deinit {
         center.removeObserver(token)
+    }
+    
+    func disposed(by tokensBag: TokensBag) {
+        tokensBag.append(self)
     }
 }

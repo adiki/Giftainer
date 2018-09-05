@@ -25,8 +25,8 @@ class AppFlowCoordinator: FlowCoordinator {
     }
     
     static func makeAppFlowCoordinator(completion: @escaping (AppFlowCoordinator) -> Void) {
-        CoreDataManager.makePersistencyManager { persistencyManager in
-            let viewModelsFactory = ViewModelsFactory(persistencyManager: persistencyManager)
+        CoreDataManager.makeObjectsManager { objectsManager in
+            let viewModelsFactory = ViewModelsFactory(objectsManager: objectsManager)
             let viewControllersFactory = ViewControllersFactory(viewModelsFactory: viewModelsFactory)
             let appFlowCoordinator = AppFlowCoordinator(viewControllersFactory: viewControllersFactory)
             completion(appFlowCoordinator)

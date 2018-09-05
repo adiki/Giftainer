@@ -57,6 +57,10 @@ func pinToCenter() -> [Constraint] {
     return equal(\.centerXAnchor) + equal(\.centerYAnchor)
 }
 
+func pinToCenter(of view: UIView) -> [Constraint] {
+    return equal(\.centerXAnchor, to: view) + equal(\.centerYAnchor, to: view)
+}
+
 extension UIView {
     func addSubview(_ child: UIView, constraints: [[Constraint]]) {
         addSubview(child)
