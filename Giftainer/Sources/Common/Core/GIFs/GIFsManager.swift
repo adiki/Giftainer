@@ -11,21 +11,21 @@ import RxSwift
 
 class GIFsManager {
     
+    private let gifsMetadataFetcher: GIFsMetadataFetcher    
+    
+    init(gifsMetadataFetcher: GIFsMetadataFetcher) {
+        self.gifsMetadataFetcher = gifsMetadataFetcher
+    }
+    
     func fetchPopularGIFs() -> Completable {
-        return Completable.create(subscribe: { observer in
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                observer(.completed)
-            }
-            return Disposables.create()
-        })
+        return gifsMetadataFetcher.fetchPopularGIFs()
+            .asObservable()
+            .ignoreElements()
     }
     
     func fetchGIFs(keyword: String) -> Completable {
-        return Completable.create(subscribe: { observer in
-            DispatchQueue.global().asyncAfter(deadline: .now() + 1) {
-                observer(.completed)
-            }
-            return Disposables.create()
-        })
+        return gifsMetadataFetcher.fetchGIFs(keyword: keyword)
+            .asObservable()
+            .ignoreElements()
     }
 }

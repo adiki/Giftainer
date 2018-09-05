@@ -9,14 +9,11 @@
 import Foundation
 import CoreData
 
-class CDKeyword: NSManagedObject {    
+class CDKeyword: NSManagedObject, Managed {    
 }
 
 extension CDKeyword: Convertible {
     func convert() -> Keyword {
         return Keyword()
     }
-}
-
-extension CDKeyword: Managed {
 }

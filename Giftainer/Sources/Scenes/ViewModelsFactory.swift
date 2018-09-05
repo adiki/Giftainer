@@ -10,10 +10,11 @@ import Foundation
 
 class ViewModelsFactory {
     
-    let gifsManager = GIFsManager()
+    let gifsManager: GIFsManager
     let objectsManager: ObjectsManager
     
-    init(objectsManager: ObjectsManager) {
+    init(gifsManager: GIFsManager, objectsManager: ObjectsManager) {
+        self.gifsManager = gifsManager
         self.objectsManager = objectsManager
     }
  

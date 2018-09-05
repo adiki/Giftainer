@@ -9,4 +9,10 @@
 import Foundation
 
 struct GIF {
+    let id: String
+    let date: Date
+    let width: Int
+    let height: Int
+    let mp4URLString: String
+    let stillURLString: String
 }
