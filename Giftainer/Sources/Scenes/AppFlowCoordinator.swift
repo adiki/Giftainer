@@ -28,7 +28,8 @@ class AppFlowCoordinator: FlowCoordinator {
         CoreDataManager.makeObjectsManager { objectsManager in
             let webAPICommunicator = WebAPICommunicator.makeWebAPICommunicator()
             let gifsMetadataFetcher = GiphyMetadataFetcher(webAPICommunicator: webAPICommunicator)
-            let gifsManager = GIFsManager(gifsMetadataFetcher: gifsMetadataFetcher)
+            let gifsManager = GIFsManager(gifsMetadataFetcher: gifsMetadataFetcher,
+                                          objectsManager: objectsManager)
             let viewModelsFactory = ViewModelsFactory(gifsManager: gifsManager, objectsManager: objectsManager)
             let viewControllersFactory = ViewControllersFactory(viewModelsFactory: viewModelsFactory)
             let appFlowCoordinator = AppFlowCoordinator(viewControllersFactory: viewControllersFactory)

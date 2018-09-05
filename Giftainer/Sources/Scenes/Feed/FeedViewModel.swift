@@ -66,7 +66,7 @@ class FeedViewModel {
                 self?.increaseNumberOfFetchesInProgress()
             })
             .flatMap { [gifsManager] searchText in
-                gifsManager.fetchGIFs(keyword: searchText)
+                gifsManager.fetchGIFs(searchText: searchText)
                     .catchError { _ in Completable.empty() }
                     .andThen(Observable.just(()))
             }

@@ -6,8 +6,9 @@
 //  Copyright © 2018 MobileSolutions. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
+import RxSwift
 
 class CoreDataManager: ObjectsManager {    
     
@@ -15,6 +16,7 @@ class CoreDataManager: ObjectsManager {
     private let mainContext: NSManagedObjectContext
     private let backgroundContext: NSManagedObjectContext
     private var tokens: [Any] = []
+    private let backgroundScheduler = ConcurrentDispatchQueueScheduler(qos: .userInitiated)
     
     init(persistentContainer: NSPersistentContainer) {
         self.persistentContainer = persistentContainer
@@ -30,6 +32,19 @@ class CoreDataManager: ObjectsManager {
         setup(fetchRequest: request)
         let coreDataObjectsProvider = makeObjectsProvider(with: request)
         return AnyObjectsProvider(objectsProvider: coreDataObjectsProvider)
+    }
+    
+    func save(gifs: [GIF]) -> Completable {
+        return Completable.create { [backgroundContext] observer in
+            backgroundContext.performChanges {
+                for gif in gifs {
+                    _ = CDGIF.findOrCreate(gif: gif, in: backgroundContext)
+                }
+                observer(.completed)
+            }
+            return Disposables.create()
+        }
+        .observeOn(backgroundScheduler)
     }
     
     private func setup<Result: NSFetchRequestResult>(fetchRequest: NSFetchRequest<Result>) {

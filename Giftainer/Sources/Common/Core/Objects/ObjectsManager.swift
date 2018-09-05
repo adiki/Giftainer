@@ -7,10 +7,12 @@
 //
 
 import Foundation
+import RxSwift
 
 protocol ObjectsManager {
     
     func makeGIFsProvider() -> AnyObjectsProvider<GIF>
+    func save(gifs: [GIF]) -> Completable
     
     static func makeObjectsManager(completion: @escaping (ObjectsManager) -> Void)
 }

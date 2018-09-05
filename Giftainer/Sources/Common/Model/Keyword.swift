@@ -9,4 +9,5 @@
 import Foundation
 
 struct Keyword {
+    let value: String
 }

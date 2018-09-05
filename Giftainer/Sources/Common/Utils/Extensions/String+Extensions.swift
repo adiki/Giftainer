@@ -18,4 +18,14 @@ extension String {
     static func localize(_ string: String) -> String {
         return NSLocalizedString(string, tableName: nil, comment: "")
     }
+    
+    func keywords() -> [Keyword] {
+        if let regex = try? NSRegularExpression(pattern: "\\w+", options: .caseInsensitive) {
+            let string = self as NSString
+            return regex.matches(in: self, options: [], range: NSRange(location: 0, length: string.length)).map {
+                Keyword(value: string.substring(with: $0.range).lowercased())
+            }
+        }
+        return []
+    }
 }

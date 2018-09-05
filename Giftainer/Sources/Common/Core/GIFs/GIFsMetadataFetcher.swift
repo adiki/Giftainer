@@ -11,5 +11,5 @@ import RxSwift
 
 protocol GIFsMetadataFetcher {
     func fetchPopularGIFs() -> Single<[GIF]>
-    func fetchGIFs(keyword: String) -> Single<[GIF]>
+    func fetchGIFs(searchText: String) -> Single<[GIF]>
 }

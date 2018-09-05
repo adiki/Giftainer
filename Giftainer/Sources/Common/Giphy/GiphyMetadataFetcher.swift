@@ -28,9 +28,9 @@ class GiphyMetadataFetcher: GIFsMetadataFetcher {
         
     }
     
-    func fetchGIFs(keyword: String) -> Single<[GIF]> {
+    func fetchGIFs(searchText: String) -> Single<[GIF]> {
         var parameters = makeBaseParameters()
-        parameters["q"] = keyword
+        parameters["q"] = searchText
         let gifsMethod = WebAPIMethod<GiphyResponse>(urlString: baseURLString + "search",
                                                      parameters: parameters)
         return webAPICommunicator.GET(method: gifsMethod)

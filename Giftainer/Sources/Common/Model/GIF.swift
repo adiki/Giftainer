@@ -15,4 +15,11 @@ struct GIF {
     let height: Int
     let mp4URLString: String
     let stillURLString: String
+    private(set) var keywords: [Keyword]
+    
+    func with(keywords: [Keyword]) -> GIF {
+        var copy = self
+        copy.keywords = keywords
+        return copy
+    }
 }

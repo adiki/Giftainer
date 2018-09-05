@@ -21,11 +21,12 @@ extension GiphyGIF: Convertible {
             let height = Int(images.mp4.width) else {
                 return nil
         }
-        return GIF(id: id,
+        return GIF(id: "giphy:\(id)",
                    date: import_datetime,
                    width: width,
                    height: height,
                    mp4URLString: images.mp4.mp4,
-                   stillURLString: images.still.url)
+                   stillURLString: images.still.url,
+                   keywords: [])
     }
 }
