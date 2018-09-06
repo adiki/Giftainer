@@ -47,7 +47,6 @@ extension Managed {
     
 }
 
-
 extension Managed where Self: NSManagedObject {
     
     static var entity: NSEntityDescription { return entity()  }
@@ -61,8 +60,7 @@ extension Managed where Self: NSManagedObject {
         }
         return object
     }
-    
-    
+        
     static func findOrFetch(in context: NSManagedObjectContext, matching predicate: NSPredicate) -> Self? {
         guard let object = materializedObject(in: context, matching: predicate) else {
             return fetch(in: context) { request in
@@ -93,5 +91,4 @@ extension Managed where Self: NSManagedObject {
         }
         return nil
     }
-    
 }

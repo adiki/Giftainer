@@ -18,9 +18,11 @@ class FeedViewModel {
     let isNoGIFsInfoHidden: Observable<Bool>
     let isNoResultsInfoHidden: Observable<Bool>
     let isActivityInProgress: Observable<Bool>
+    let isMaximised: Observable<Bool>
     
     private let searchTextBehaviorRelay: BehaviorRelay<String>
     private let numberOfFetchesInProgress = BehaviorRelay(value: 0)
+    private let isMaximisedBehaviorRelay = BehaviorRelay(value: false)
     private let gifsManager: GIFsManager
     private let objectsManager: ObjectsManager
     private let disposeBag = DisposeBag()
@@ -35,16 +37,36 @@ class FeedViewModel {
         searchText = searchTextBehaviorRelay.asObservable()
         
         isNoGIFsInfoHidden = Observable
-            .combineLatest(gifsProvider.numberOfObjects, searchText, numberOfFetchesInProgress.asObservable())
-            .map { $0 > 0 || !$1.isEmpty || $2 > 0 }
+            .combineLatest(gifsProvider.updates, searchText, numberOfFetchesInProgress.asObservable())
+            .map { [gifsProvider] in
+                gifsProvider.numberOfObjects() > 0 || !$1.isEmpty || $2 > 0
+            }
         isNoResultsInfoHidden = Observable
-            .combineLatest(gifsProvider.numberOfObjects, searchText, numberOfFetchesInProgress.asObservable())
-            .map { $0 > 0 || $1.isEmpty || $2 > 0 }
+            .combineLatest(gifsProvider.updates, searchText, numberOfFetchesInProgress.asObservable())
+            .map { [gifsProvider] in
+                gifsProvider.numberOfObjects() > 0 || $1.isEmpty || $2 > 0
+            }
         isActivityInProgress = Observable
-            .combineLatest(gifsProvider.numberOfObjects, numberOfFetchesInProgress.asObservable())
-            .map { $0 == 0 && $1 > 0 }
+            .combineLatest(gifsProvider.updates, numberOfFetchesInProgress.asObservable())
+            .map { [gifsProvider] in
+                gifsProvider.numberOfObjects() == 0 && $1 > 0
+            }
+        isMaximised = isMaximisedBehaviorRelay
+            .asObservable()
         
         setupFetchingPopularGIFsWhenContentIsEmpty()
+    }
+    
+    func viewDidLayoutSubviews() {
+        isMaximisedBehaviorRelay.accept(isMaximisedBehaviorRelay.value)
+    }
+    
+    func viewWillTransition() {
+        isMaximisedBehaviorRelay.accept(isMaximisedBehaviorRelay.value)        
+    }
+    
+    func didTapOnObject() {
+        isMaximisedBehaviorRelay.accept(!isMaximisedBehaviorRelay.value)
     }
     
     func accept<O: ObservableType>(searchInput: O) where O.E == String {
@@ -66,11 +88,11 @@ class FeedViewModel {
                 self?.increaseNumberOfFetchesInProgress()
             })
             .flatMap { [gifsManager] searchText in
-                gifsManager.fetchGIFs(searchText: searchText)
+                gifsManager.fetchAndSaveGIFs(searchText: searchText)
                     .catchError { _ in Completable.empty() }
                     .andThen(Observable.just(()))
             }
-            .do(onNext: { [weak self] in
+            .do(onCompleted: { [weak self] in
                 self?.decreaseNumberOfFetchesInProgress()
             })
             .subscribe()
@@ -85,7 +107,7 @@ class FeedViewModel {
                 self?.increaseNumberOfFetchesInProgress()
             })
             .ignoreElements()
-            .andThen(gifsManager.fetchPopularGIFs())
+            .andThen(gifsManager.fetchAndSavePopularGIFs())
             .do(onDispose: { [weak self] in
                 self?.decreaseNumberOfFetchesInProgress()
             })

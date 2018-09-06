@@ -13,11 +13,9 @@ import RxSwift
 
 class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsProvider, NSFetchedResultsControllerDelegate where CoreDataObject: NSFetchRequestResult {
     
-    let numberOfObjects: Observable<Int>
     let updates: Observable<[Update<CoreDataObject.ConvertedType>]>
     
-    private let numberOfObjectsBehaviorRelay: BehaviorRelay<Int>
-    private let updatesPublishSubject = PublishSubject<[Update<CoreDataObject.ConvertedType>]>()
+    private let updatesBehaviorRelay = BehaviorRelay<[Update<CoreDataObject.ConvertedType>]>(value: [])
     private let fetchedResultsController: NSFetchedResultsController<CoreDataObject>
     
     private var updatesList: [Update<Object>] = []
@@ -25,14 +23,15 @@ class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsPro
     init(fetchedResultsController: NSFetchedResultsController<CoreDataObject>) {
         self.fetchedResultsController = fetchedResultsController
         try! fetchedResultsController.performFetch()
-        let numberOfObjectsBehaviorRelay = BehaviorRelay(value: fetchedResultsController.numberOfObjects)
-        self.numberOfObjectsBehaviorRelay = numberOfObjectsBehaviorRelay
-        numberOfObjects = numberOfObjectsBehaviorRelay.asObservable()
-        updates = updatesPublishSubject.asObservable()
+        updates = updatesBehaviorRelay.asObservable()
         
         super.init()
         
         fetchedResultsController.delegate = self
+    }
+    
+    func numberOfObjects() -> Int {
+        return fetchedResultsController.numberOfObjects
     }
     
     func object(at indexPath: IndexPath) -> CoreDataObject.ConvertedType {
@@ -63,8 +62,6 @@ class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsPro
     }
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        updatesPublishSubject.onNext(updatesList)
-        let numberOfObjects = fetchedResultsController.numberOfObjects
-        numberOfObjectsBehaviorRelay.accept(numberOfObjects)
+        updatesBehaviorRelay.accept(updatesList)
     }
 }

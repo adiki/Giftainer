@@ -81,6 +81,7 @@ class CoreDataManager: ObjectsManager {
         let storeURL = URL.documents.appendingPathComponent("Giftainer.giftainer")
         let storeDescription = NSPersistentStoreDescription(url: storeURL)
         storeDescription.shouldMigrateStoreAutomatically = true
+        storeDescription.shouldInferMappingModelAutomatically = true
         persistentContainer.persistentStoreDescriptions = [storeDescription]
         persistentContainer.loadPersistentStores { _, error in
             if let error = error {

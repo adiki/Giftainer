@@ -25,6 +25,4 @@ struct WebAPIMethod<SuccessResponse: Decodable> {
         self.urlString = urlString
         self.parameters = parameters
     }
-    
-    
 }

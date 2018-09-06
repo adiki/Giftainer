@@ -10,8 +10,8 @@ import UIKit
 
 class FeedView: View {
     
-    let flowCollectionView = FlowCollectionView()
-    private(set) var flowCollectionViewBottomConstraint: NSLayoutConstraint?
+    let giftainerCollectionView = GiftainerCollectionView()
+    private(set) var giftainerCollectionViewBottomConstraint: NSLayoutConstraint?
     let noGIFsLabel = UILabel()
     let noResultsFoundLabel = UILabel()
     private(set) var noGIFsLabelCenterYConstraint: NSLayoutConstraint?
@@ -28,15 +28,15 @@ class FeedView: View {
     }
     
     override func setupSubviews() {
-        setupFlowCollectionView()
+        setupGiftainerCollectionView()
         setupNoGIFsLabel()
         setupNoResultsFoundLabel()
     }
     
-    private func setupFlowCollectionView() {
-        flowCollectionView.backgroundColor = .clear
-        flowCollectionView.keyboardDismissMode = .onDrag
-        flowCollectionView.alwaysBounceVertical = true
+    private func setupGiftainerCollectionView() {
+        giftainerCollectionView.backgroundColor = .clear
+        giftainerCollectionView.keyboardDismissMode = .onDrag
+        giftainerCollectionView.alwaysBounceVertical = true
     }
     
     private func setupNoGIFsLabel() {
@@ -57,16 +57,16 @@ class FeedView: View {
     }
     
     override func addSubviews() {
-        addSubview(flowCollectionView,
+        addSubview(giftainerCollectionView,
                    constraints: [pinAllEdges()])
-        flowCollectionViewBottomConstraint = flowCollectionView.constraint(for: flowCollectionView.bottomAnchor)
-        flowCollectionView.addSubview(noGIFsLabel,
+        giftainerCollectionViewBottomConstraint = giftainerCollectionView.constraint(for: giftainerCollectionView.bottomAnchor)
+        giftainerCollectionView.addSubview(noGIFsLabel,
                                       constraints: [pinToCenter(),
                                                     equal(\.widthAnchor, multiplier: 0.9)])
         noGIFsLabelCenterYConstraint = noGIFsLabel.constraint(for: noGIFsLabel.centerYAnchor)
-        flowCollectionView.addSubview(noResultsFoundLabel,
+        giftainerCollectionView.addSubview(noResultsFoundLabel,
                                       constraints: [pinToCenter(of: noGIFsLabel)])
-        flowCollectionView.addSubview(activityIndicator,
+        giftainerCollectionView.addSubview(activityIndicator,
                                       constraints: [pinToCenter(of: noGIFsLabel)])
     }
 }

@@ -19,31 +19,17 @@ class GIFsManager {
         self.objectsManager = objectsManager
     }
     
-    func fetchPopularGIFs() -> Completable {
+    func fetchAndSavePopularGIFs() -> Completable {
         return gifsMetadataFetcher.fetchPopularGIFs()
-            .flatMap { [objectsManager] gifs in
-                return objectsManager.save(gifs: gifs)                    
-                    .asObservable()
-                    .map { _ in () }
-                    .asSingle()
-            }
-            .asObservable()
-            .ignoreElements()
+            .flatMapCompletable(objectsManager.save)
     }
     
-    func fetchGIFs(searchText: String) -> Completable {
+    func fetchAndSaveGIFs(searchText: String) -> Completable {
         let keywords = searchText.keywords()
         return gifsMetadataFetcher.fetchGIFs(searchText: searchText)
             .map { gifs in                
                 return gifs.map { $0.with(keywords: keywords) }
             }
-            .flatMap { [objectsManager] gifs in
-                return objectsManager.save(gifs: gifs)
-                    .asObservable()
-                    .map { _ in () }
-                    .asSingle()
-            }
-            .asObservable()
-            .ignoreElements()
+            .flatMapCompletable(objectsManager.save)
     }
 }

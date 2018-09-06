@@ -19,6 +19,8 @@ class CDGIF: NSManagedObject, Managed {
     @NSManaged private(set) var stillURLString: String
     @NSManaged private(set) var keywords: Set<CDKeyword>
     
+    @NSManaged private(set) var modificationDate: NSDate
+    
     static func findOrCreate(gif: GIF, in context: NSManagedObjectContext) -> CDGIF {
         let predicate = NSPredicate(format: "%K == %@", #keyPath(id), gif.id)
         let cdGIF = findOrCreate(in: context, matching: predicate)
@@ -46,7 +48,12 @@ class CDGIF: NSManagedObject, Managed {
                 cdGIF.keywords.insert(cdKeyword)
             }            
         }
+        cdGIF.modificationDate = NSDate()
         return cdGIF
+    }
+    
+    static var defaultSortDescriptors: [NSSortDescriptor] {
+        return [NSSortDescriptor(key: #keyPath(modificationDate), ascending: false)]
     }
 }
 

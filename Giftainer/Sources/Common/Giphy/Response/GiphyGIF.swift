@@ -18,7 +18,7 @@ extension GiphyGIF: Convertible {
     
     func convert() -> GIF? {
         guard let width = Int(images.mp4.width),
-            let height = Int(images.mp4.width) else {
+            let height = Int(images.mp4.height) else {
                 return nil
         }
         return GIF(id: "giphy:\(id)",

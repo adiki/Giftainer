@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 extension String {
     
@@ -27,5 +28,9 @@ extension String {
             }
         }
         return []
+    }
+    
+    var color: UIColor {
+        return UIColor(rgb: hashValue & 0xFFFFFF)
     }
 }

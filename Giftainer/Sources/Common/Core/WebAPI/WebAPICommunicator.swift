@@ -31,7 +31,7 @@ class WebAPICommunicator {
     
     func GET<SuccessResponse>(method: WebAPIMethod<SuccessResponse>) -> Single<SuccessResponse> {
         let request = makeGETRequest(method: method)
-        return urlSession.rx.data(request: request)
+        return urlSession.rx.data(request: request)            
             .asSingle()
             .flatMap(handleResponse)
     }

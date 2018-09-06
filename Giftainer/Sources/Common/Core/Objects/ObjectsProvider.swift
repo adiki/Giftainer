@@ -13,8 +13,8 @@ protocol ObjectsProvider {
     
     associatedtype Object
     
-    var numberOfObjects: Observable<Int> { get }
     var updates: Observable<[Update<Object>]> { get }
     
+    func numberOfObjects() -> Int
     func object(at indexPath: IndexPath) -> Object
 }
