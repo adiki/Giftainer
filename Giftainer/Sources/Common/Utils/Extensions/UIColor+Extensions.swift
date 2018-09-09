@@ -12,6 +12,7 @@ extension UIColor {
     
     static let snapperRocksBlue = UIColor(rgb: 0x19A0BE)
     static let lightSnapperRocksBlue = UIColor(rgb: 0x3EAAC4)
+    static let lime = UIColor(rgb: 0x32CD32)
     
     convenience init(rgb: Int) {
         self.init(red: (rgb >> 16) & 0xff, green: (rgb >> 8) & 0xff, blue: rgb & 0xff)

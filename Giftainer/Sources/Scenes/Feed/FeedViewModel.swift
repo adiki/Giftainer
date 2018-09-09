@@ -18,11 +18,11 @@ class FeedViewModel {
     let isNoGIFsInfoHidden: Observable<Bool>
     let isNoResultsInfoHidden: Observable<Bool>
     let isActivityInProgress: Observable<Bool>
-    let isMaximised: Observable<Bool>
+    let numberOfColumns: Observable<Int>
     
     private let searchTextBehaviorRelay: BehaviorRelay<String>
     private let numberOfFetchesInProgress = BehaviorRelay(value: 0)
-    private let isMaximisedBehaviorRelay = BehaviorRelay(value: false)
+    private let numberOfColumnsBehaviorRelay = BehaviorRelay(value: 2)
     private let gifsManager: GIFsManager
     private let objectsManager: ObjectsManager
     private let disposeBag = DisposeBag()
@@ -51,22 +51,22 @@ class FeedViewModel {
             .map { [gifsProvider] in
                 gifsProvider.numberOfObjects() == 0 && $1 > 0
             }
-        isMaximised = isMaximisedBehaviorRelay
+        numberOfColumns = numberOfColumnsBehaviorRelay
             .asObservable()
-        
-        setupFetchingPopularGIFsWhenContentIsEmpty()
     }
     
-    func viewDidLayoutSubviews() {
-        isMaximisedBehaviorRelay.accept(isMaximisedBehaviorRelay.value)
+    func viewDidLoad() {
+        increaseNumberOfFetchesInProgress()
+        gifsManager.fetchAndSavePopularGIFs()
+            .do(onDispose: { [weak self] in
+                self?.decreaseNumberOfFetchesInProgress()
+            })
+            .subscribe()
+            .disposed(by: disposeBag)
     }
     
-    func viewWillTransition() {
-        isMaximisedBehaviorRelay.accept(isMaximisedBehaviorRelay.value)        
-    }
-    
-    func didTapOnObject() {
-        isMaximisedBehaviorRelay.accept(!isMaximisedBehaviorRelay.value)
+    func didUpdate(numberOfColumns: Int) {
+        numberOfColumnsBehaviorRelay.accept(numberOfColumns)
     }
     
     func accept<O: ObservableType>(searchInput: O) where O.E == String {
@@ -93,22 +93,6 @@ class FeedViewModel {
                     .andThen(Observable.just(()))
             }
             .do(onCompleted: { [weak self] in
-                self?.decreaseNumberOfFetchesInProgress()
-            })
-            .subscribe()
-            .disposed(by: disposeBag)
-    }
-    
-    private func setupFetchingPopularGIFsWhenContentIsEmpty() {
-        isNoGIFsInfoHidden
-            .filter { $0 == false }
-            .take(1)
-            .do(onNext: { [weak self] _ in
-                self?.increaseNumberOfFetchesInProgress()
-            })
-            .ignoreElements()
-            .andThen(gifsManager.fetchAndSavePopularGIFs())
-            .do(onDispose: { [weak self] in
                 self?.decreaseNumberOfFetchesInProgress()
             })
             .subscribe()

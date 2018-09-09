@@ -11,13 +11,16 @@ import Foundation
 class ViewControllersFactory {
     
     private let viewModelsFactory: ViewModelsFactory
+    private let gifsCache: GIFsCache
     
-    init(viewModelsFactory: ViewModelsFactory) {
+    init(viewModelsFactory: ViewModelsFactory, gifsCache: GIFsCache) {
         self.viewModelsFactory = viewModelsFactory
+        self.gifsCache = gifsCache
     }
     
     func makeFeedViewController() -> FeedViewController {
-        let feedViewModel = viewModelsFactory.makeFeedViewModel()
-        return FeedViewController(feedViewModel: feedViewModel)
+        let feedViewModel = viewModelsFactory.makeFeedViewModel()        
+        return FeedViewController(feedViewModel: feedViewModel,
+                                  gifsCache: gifsCache)
     }
 }

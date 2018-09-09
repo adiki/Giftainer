@@ -22,7 +22,7 @@ class NotificationToken {
         center.removeObserver(token)
     }
     
-    func disposed(by tokensBag: TokensBag) {
-        tokensBag.append(self)
+    func disposed(by referencesBag: ReferencesBag) {
+        referencesBag.append(self)
     }
 }

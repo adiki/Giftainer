@@ -10,17 +10,15 @@ import UIKit
 
 class FeedView: View {
     
-    let giftainerCollectionView = GiftainerCollectionView()
-    private(set) var giftainerCollectionViewBottomConstraint: NSLayoutConstraint?
+    let giftainerCollectionView = UICollectionView(frame: .zero, collectionViewLayout: GiftainerLayout())
     let noGIFsLabel = UILabel()
     let noResultsFoundLabel = UILabel()
-    private(set) var noGIFsLabelCenterYConstraint: NSLayoutConstraint?
     let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        noGIFsLabelCenterYConstraint?.constant = -safeAreaInsets.top / 2
+        noGIFsLabel.constraint(for: noGIFsLabel.centerYAnchor, and: centerYAnchor)?.constant = -safeAreaInsets.top / 2
     }
     
     override func setupBackground() {
@@ -59,11 +57,9 @@ class FeedView: View {
     override func addSubviews() {
         addSubview(giftainerCollectionView,
                    constraints: [pinAllEdges()])
-        giftainerCollectionViewBottomConstraint = giftainerCollectionView.constraint(for: giftainerCollectionView.bottomAnchor)
         giftainerCollectionView.addSubview(noGIFsLabel,
                                       constraints: [pinToCenter(),
                                                     equal(\.widthAnchor, multiplier: 0.9)])
-        noGIFsLabelCenterYConstraint = noGIFsLabel.constraint(for: noGIFsLabel.centerYAnchor)
         giftainerCollectionView.addSubview(noResultsFoundLabel,
                                       constraints: [pinToCenter(of: noGIFsLabel)])
         giftainerCollectionView.addSubview(activityIndicator,

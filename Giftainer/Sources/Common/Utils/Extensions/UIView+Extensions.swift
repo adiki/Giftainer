@@ -11,14 +11,19 @@ import UIKit
 
 extension UIView {
     
-    func constraint<Axis>(for anchor: NSLayoutAnchor<Axis>) -> NSLayoutConstraint? {        
+    var isPortrait: Bool {
+        return frame.size.isPortrait
+    }
+    
+    func constraint<Axis>(for anchor1: NSLayoutAnchor<Axis>, and anchor2: NSLayoutAnchor<Axis>) -> NSLayoutConstraint? {
         for constraint in constraints {
-            if constraint.firstAnchor == anchor || constraint.secondAnchor == anchor {
+            if constraint.firstAnchor == anchor1 && constraint.secondAnchor == anchor2
+                || (constraint.firstAnchor == anchor2 && constraint.secondAnchor == anchor1) {
                 return constraint
             }
         }
         if let superview = superview {
-            return superview.constraint(for: anchor)
+            return superview.constraint(for: anchor1, and: anchor2)
         }
         return nil
     }

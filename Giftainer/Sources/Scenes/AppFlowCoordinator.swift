@@ -30,8 +30,13 @@ class AppFlowCoordinator: FlowCoordinator {
             let gifsMetadataFetcher = GiphyMetadataFetcher(webAPICommunicator: webAPICommunicator)
             let gifsManager = GIFsManager(gifsMetadataFetcher: gifsMetadataFetcher,
                                           objectsManager: objectsManager)
-            let viewModelsFactory = ViewModelsFactory(gifsManager: gifsManager, objectsManager: objectsManager)
-            let viewControllersFactory = ViewControllersFactory(viewModelsFactory: viewModelsFactory)
+            let viewModelsFactory = ViewModelsFactory(gifsManager: gifsManager,
+                                                      objectsManager: objectsManager)
+            let fileManager = FileManager.default
+            let gifsCache = GIFsCache(fileManager: fileManager,
+                                      webAPICommunicator: webAPICommunicator)
+            let viewControllersFactory = ViewControllersFactory(viewModelsFactory: viewModelsFactory,
+                                                                gifsCache: gifsCache)
             let appFlowCoordinator = AppFlowCoordinator(viewControllersFactory: viewControllersFactory)
             completion(appFlowCoordinator)
         }

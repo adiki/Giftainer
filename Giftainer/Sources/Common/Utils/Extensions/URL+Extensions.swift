@@ -13,4 +13,8 @@ extension URL {
     static var documents: URL {
         return try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
     }
+    
+    static var temporaryDocumentsMP4URL: URL {
+        return documents.appendingPathComponent(UUID().uuidString).appendingPathExtension("mp4")
+    }
 }

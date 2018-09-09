@@ -16,18 +16,24 @@ class FeedViewController: UIViewController {
     let disposeBag = DisposeBag()
 
     private let searchBar = UISearchBar()
+    private var searchBarShouldBeginEditing = true
     private lazy var feedDataSource = CollectionViewDataSource<GIF, FeedGIFCell>(collectionView: feedView.giftainerCollectionView,
                                                                                  objectsProvider: feedViewModel.gifsProvider)
-    private let tokensBag = TokensBag()
+    private let referencesBag = ReferencesBag()
     
     private var feedView: FeedView {
         return view as! FeedView
     }
     
     private let feedViewModel: FeedViewModel
+    private let gifsCache: GIFsCache
     
-    init(feedViewModel: FeedViewModel) {
+    private var isLayoutMaximised = false
+    
+    init(feedViewModel: FeedViewModel,
+         gifsCache: GIFsCache) {
         self.feedViewModel = feedViewModel
+        self.gifsCache = gifsCache
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -47,19 +53,21 @@ class FeedViewController: UIViewController {
         setupNoResultsLabel()
         setupActivityIndicator()
         setupCollectionView()
-        setupMaximisationUpdate()
         setupKeyboardNotifications()
         setupClosingKeyboardOnTap()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        feedViewModel.viewDidLayoutSubviews()
+        feedViewModel.viewDidLoad()
     }
     
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        feedViewModel.viewWillTransition()
+        
+        let numberOfColumns: Int
+        if feedView.isPortrait && isLayoutMaximised {
+            numberOfColumns = 1
+        } else {
+            numberOfColumns = 2
+        }
+        feedView.giftainerCollectionView.giftainerLayout?.numberOfColumns = numberOfColumns
     }
     
     private func setupSearchBar() {
@@ -104,21 +112,6 @@ class FeedViewController: UIViewController {
             .subscribe(onNext: { [weak self] feedGIFCell, gif in
                 self?.configure(feedGIFCell: feedGIFCell, gif: gif)
             })
-            .disposed(by: disposeBag)
-    }
-    
-    private func setupMaximisationUpdate() {
-        feedViewModel.isMaximised
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [feedView] isMaximised in
-                let giftainerLayout = GiftainerLayout()
-                if isMaximised {
-                    giftainerLayout.numberOfColumns = feedView.frame.size.maximizedNumberOfColumns                    
-                } else {
-                    giftainerLayout.numberOfColumns = feedView.frame.size.mimizedNumberOfColumns
-                }
-                feedView.giftainerCollectionView.setCollectionViewLayout(giftainerLayout, animated: true)
-            })
             .disposed(by: disposeBag)        
     }
     
@@ -136,26 +129,46 @@ class FeedViewController: UIViewController {
     
     private func setupKeyboardNotifications() {
         NotificationCenter.default
-            .addObserver { [weak self] (notification: KeyboardWillShowNotification) in
-                self?.feedView.giftainerCollectionViewBottomConstraint?.constant = -notification.endFrame.height
+            .addObserver { [feedView] (notification: KeyboardWillShowNotification) in
+                feedView.giftainerCollectionView.constraint(for: feedView.giftainerCollectionView.bottomAnchor, and: feedView.bottomAnchor)?.constant = -notification.endFrame.height
                 UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
-                    self?.feedView.layoutIfNeeded()
+                    feedView.layoutIfNeeded()
                 }).startAnimation()
             }
-            .disposed(by: tokensBag)
+            .disposed(by: referencesBag)
         
         NotificationCenter.default
-            .addObserver { [weak self] (notification: KeyboardWillHideNotification) in
-                self?.feedView.giftainerCollectionViewBottomConstraint?.constant = 0
+            .addObserver { [feedView] (notification: KeyboardWillHideNotification) in
+                feedView.giftainerCollectionView.constraint(for: feedView.giftainerCollectionView.bottomAnchor, and: feedView.bottomAnchor)?.constant = 0
                 UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
-                    self?.feedView.layoutIfNeeded()
+                    feedView.layoutIfNeeded()
                 }).startAnimation()
             }
-            .disposed(by: tokensBag)
+            .disposed(by: referencesBag)
     }
     
     private func configure(feedGIFCell: FeedGIFCell, gif: GIF) {
         feedGIFCell.contentView.backgroundColor = gif.id.color
+        Observable.concat(gifsCache.image(for: gif), gifsCache.animatedImage(for: gif))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { event in
+                switch event {
+                case .progress(let progress):
+                    feedGIFCell.progressView.isHidden = false
+                    feedGIFCell.progressView.setProgress(progress, animated: true)
+                    if progress == 1 {
+                        feedGIFCell.progressView.isHidden = true
+                        feedGIFCell.activityIndicatorView.stopAnimating()
+                    }
+                case .image(let image):
+                    feedGIFCell.imageView.image = image.makePendulum()
+                    if image.images != nil {
+                        feedGIFCell.progressView.isHidden = true
+                        feedGIFCell.activityIndicatorView.stopAnimating()
+                    }
+                }
+            })
+            .disposed(by: feedGIFCell.disposeBag)
     }
 }
 
@@ -167,18 +180,29 @@ extension FeedViewController: GiftainerLayoutDelegate {
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        feedViewModel.didTapOnObject()
+        guard feedView.isPortrait else {
+            return
+        }
+        isLayoutMaximised = !isLayoutMaximised
+        let giftainerLayout = GiftainerLayout()
+        giftainerLayout.numberOfColumns = isLayoutMaximised ? 1 : 2
+        feedView.giftainerCollectionView.setCollectionViewLayout(giftainerLayout, animated: true)
     }
 }
 
 extension FeedViewController: UISearchBarDelegate {
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        if feedViewModel.gifsProvider.numberOfObjects() > 0 {
-            let indexPath = IndexPath(row: 0, section: 0)
-            feedView.giftainerCollectionView.scrollToItem(at: indexPath, at: .top, animated: true)
-        }        
-        return true
+        defer {
+            searchBarShouldBeginEditing = true
+        }
+        if searchBarShouldBeginEditing {
+            if feedViewModel.gifsProvider.numberOfObjects() > 0 {
+                let indexPath = IndexPath(row: 0, section: 0)
+                feedView.giftainerCollectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+            }
+        }
+        return searchBarShouldBeginEditing
     }
     
     //It is a workaround to prevent the odd animation of the carriage presentation on iOS11 when searchBar is becoming first responder for the first time
@@ -189,6 +213,10 @@ extension FeedViewController: UISearchBarDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.searchBar.tintColor = .snapperRocksBlue
         }
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        searchBarShouldBeginEditing = searchBar.isFirstResponder
     }
 }
 

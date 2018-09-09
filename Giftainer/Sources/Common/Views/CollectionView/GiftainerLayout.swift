@@ -20,7 +20,7 @@ class GiftainerLayout: UICollectionViewLayout {
         return collectionView?.delegate as? GiftainerLayoutDelegate
     }
     
-    var numberOfColumns = 0 {
+    var numberOfColumns = 2 {
         didSet {
             invalidateLayout()
         }
@@ -47,9 +47,6 @@ class GiftainerLayout: UICollectionViewLayout {
         guard let collectionView = collectionView,
             let delegate = delegate else {
                 return
-        }
-        if numberOfColumns == 0 {
-            numberOfColumns = collectionView.frame.size.mimizedNumberOfColumns
         }
         cache = []
         contentHeight = 0

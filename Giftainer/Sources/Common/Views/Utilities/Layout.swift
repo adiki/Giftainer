@@ -50,7 +50,15 @@ func constant<Anchor>(_ keyPath: KeyPath<UIView, Anchor>, constant: CGFloat, pri
 }
 
 func pinAllEdges() -> [Constraint] {
-    return equal(\.topAnchor) + equal(\.bottomAnchor) + equal(\.leadingAnchor) + equal(\.trailingAnchor)
+    return pinHorizontalEdges() + pinVerticalEdges()
+}
+
+func pinHorizontalEdges() -> [Constraint] {
+    return equal(\.leadingAnchor) + equal(\.trailingAnchor)
+}
+
+func pinVerticalEdges() -> [Constraint] {
+    return equal(\.topAnchor) + equal(\.bottomAnchor)
 }
 
 func pinToCenter() -> [Constraint] {

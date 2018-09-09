@@ -10,11 +10,8 @@ import Foundation
 import UIKit
 
 extension CGSize {
-    var mimizedNumberOfColumns: Int {
-        return width < height ? 2 : 3
-    }
     
-    var maximizedNumberOfColumns: Int {
-        return width < height ? 1 : 2
+    var isPortrait: Bool {
+        return width < height
     }
 }

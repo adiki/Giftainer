@@ -28,8 +28,7 @@ class CoreDataManager: ObjectsManager {
     }
     
     func makeGIFsProvider() -> AnyObjectsProvider<GIF> {
-        let request = CDGIF.sortedFetchRequest
-        setup(fetchRequest: request)
+        let request = CDGIF.sortedFetchRequest        
         let coreDataObjectsProvider = makeObjectsProvider(with: request)
         return AnyObjectsProvider(objectsProvider: coreDataObjectsProvider)
     }
@@ -47,12 +46,8 @@ class CoreDataManager: ObjectsManager {
         .observeOn(backgroundScheduler)
     }
     
-    private func setup<Result: NSFetchRequestResult>(fetchRequest: NSFetchRequest<Result>) {
-        fetchRequest.returnsObjectsAsFaults = false
-        fetchRequest.fetchBatchSize = 30
-    }
-    
     private func makeObjectsProvider<T: Convertible>(with request: NSFetchRequest<T>) -> CoreDataObjectsProvider<T> {
+        request.returnsObjectsAsFaults = false
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
                                                                   managedObjectContext: mainContext,
                                                                   sectionNameKeyPath: nil,

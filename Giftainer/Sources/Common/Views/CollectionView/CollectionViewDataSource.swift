@@ -24,7 +24,7 @@ class CollectionViewDataSource<Object, Cell: UICollectionViewCell>: NSObject, UI
         self.collectionView = collectionView
         self.objectsProvider = objectsProvider
         cellForConfiguration = cellForConfigurationPublishSubject.asObservable()
-        
+        cellForConfigurationPublishSubject.disposed(by: disposeBag)
         super.init()
         
         collectionView.register(Cell.self, forCellWithReuseIdentifier: Cell.self.description())

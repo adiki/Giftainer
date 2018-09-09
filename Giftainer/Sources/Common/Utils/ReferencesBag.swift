@@ -1,5 +1,5 @@
 //
-//  TokensBag.swift
+//  ReferencesBag.swift
 //  Giftainer
 //
 //  Created by Adrian Śliwa on 04/09/2018.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-class TokensBag {
+class ReferencesBag {
     
-    private var tokens: [Any] = []
+    private var tokens: [AnyObject] = []
     
-    func append(_ token: Any) {
+    func append(_ token: AnyObject) {
         tokens.append(token)
     }
 }
