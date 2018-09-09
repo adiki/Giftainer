@@ -35,8 +35,6 @@ class FeedViewController: UIViewController {
     private let feedViewModel: FeedViewModel
     private let gifsCache: GIFsCache
     
-    private var isLayoutMaximised = false
-    
     init(feedViewModel: FeedViewModel,
          gifsCache: GIFsCache) {
         self.feedViewModel = feedViewModel
@@ -69,11 +67,19 @@ class FeedViewController: UIViewController {
         feedViewModel.viewDidLoad()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if feedView.isLandscape && feedView.giftainerCollectionView.giftainerLayout?.numberOfColumns == 1 {
+            feedView.giftainerCollectionView.giftainerLayout?.numberOfColumns = 2
+        }
+    }
+    
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         
         let numberOfColumns: Int
-        if feedView.isPortrait && isLayoutMaximised {
+        if size.isPortrait && feedViewModel.isLayoutMaximised {
             numberOfColumns = 1
         } else {
             numberOfColumns = 2
@@ -118,6 +124,7 @@ class FeedViewController: UIViewController {
         feedView.giftainerCollectionView.delegate = self
         feedView.giftainerCollectionView.dataSource = feedDataSource
         feedView.giftainerCollectionView.contentInset.bottom = 15
+        feedView.giftainerCollectionView.giftainerLayout?.numberOfColumns = feedViewModel.isLayoutMaximised ? 1 : 2
         feedDataSource.cellForConfiguration
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] feedGIFCell, gif in
@@ -145,9 +152,9 @@ class FeedViewController: UIViewController {
         guard feedView.isPortrait else {
             return
         }
-        isLayoutMaximised = !isLayoutMaximised
+        feedViewModel.isLayoutMaximised = !feedViewModel.isLayoutMaximised
         let giftainerLayout = GiftainerLayout()
-        giftainerLayout.numberOfColumns = isLayoutMaximised ? 1 : 2
+        giftainerLayout.numberOfColumns = feedViewModel.isLayoutMaximised ? 1 : 2
         feedView.giftainerCollectionView.setCollectionViewLayout(giftainerLayout, animated: true)
     }
     
@@ -189,8 +196,50 @@ class FeedViewController: UIViewController {
     }
     
     private func configure(feedGIFCell: FeedGIFCell, gif: GIF) {
-        feedGIFCell.contentView.backgroundColor = gif.id.color
         feedGIFCell.id = gif.id
+        var didVibrate = false
+        feedGIFCell.panGestureRecognizer.rx.event
+            .subscribe(onNext: { [weak self, feedView, feedViewModel] panGestureRecognizer in
+                guard self?.feedView.isPortrait == true
+                    && self?.feedViewModel.isLayoutMaximised == true else {
+                    return
+                }
+                let translationX = panGestureRecognizer.translation(in: nil).x
+                let progress = min(abs(translationX) / (feedView.frame.width / 2), 1)
+                switch panGestureRecognizer.state {
+                case .began:
+                    didVibrate = false
+                case .changed:
+                    feedGIFCell.set(imageViewDeltaConstant: translationX)
+                    if translationX < 0 {
+                        feedGIFCell.imageView.alpha = 1 - progress
+                        if !didVibrate && progress > 0.5 {
+                            didVibrate = true
+                            vibrate()
+                        }
+                    }
+                case .ended, .cancelled, .failed:
+                    let velocityX = panGestureRecognizer.velocity(in: nil).x
+                    if translationX < 0 {
+                        let completed = progress > 0.5 || velocityX < -500
+                        feedGIFCell.set(imageViewDeltaConstant: completed ? -feedView.frame.width : 0)                        
+                        UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
+                            feedGIFCell.imageView.alpha = completed ? 0 : 1
+                            feedGIFCell.layoutIfNeeded()
+                            }.startAnimation()
+                        if !didVibrate && completed {
+                            didVibrate = true
+                            vibrate()
+                        }
+                        if completed {
+                            feedViewModel.remove(gif: gif)
+                        }
+                    }
+                default:
+                    break
+                }
+            })
+            .disposed(by: feedGIFCell.disposeBag)
         Observable.concat(gifsCache.image(for: gif), gifsCache.animatedImage(for: gif))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { event in

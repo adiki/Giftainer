@@ -13,6 +13,7 @@ protocol ObjectsManager {
     
     func makeGIFsProvider() -> AnyObjectsProvider<GIF>
     func save(gifs: [GIF]) -> Completable
+    func remove(gif: GIF)
     
     static func makeObjectsManager(completion: @escaping (ObjectsManager) -> Void)
 }

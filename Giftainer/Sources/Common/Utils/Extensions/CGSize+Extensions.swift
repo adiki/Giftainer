@@ -14,4 +14,8 @@ extension CGSize {
     var isPortrait: Bool {
         return width < height
     }
+    
+    var isLandscape: Bool {
+        return width > height
+    }
 }

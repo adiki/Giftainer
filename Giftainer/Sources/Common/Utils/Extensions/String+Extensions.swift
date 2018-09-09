@@ -14,7 +14,9 @@ extension String {
     static let Search = localize("Search")
     static let Your_search_history_appear_here = localize("Your_search_history_appear_here")
     static let No_results_found = localize("No_results_found")
-    static let We_have_an_issue_will_get_back_to_you = localize("We_have_an_issue_will_get_back_to_you")    
+    static let We_have_an_issue_will_get_back_to_you = localize("We_have_an_issue_will_get_back_to_you")
+    
+    static let isLayoutMaximised = "isLayoutMaximised"
     
     static func localize(_ string: String) -> String {
         return NSLocalizedString(string, tableName: nil, comment: "")

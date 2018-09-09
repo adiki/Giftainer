@@ -14,22 +14,30 @@ class FeedViewModel {
     
     let gifsProvider: AnyObjectsProvider<GIF>
     
+    var isLayoutMaximised: Bool {
+        get {
+            return userDefaults.bool(forKey: .isLayoutMaximised)
+        }
+        set {
+            userDefaults.set(newValue, forKey: .isLayoutMaximised)
+        }
+    }
     let searchText: Observable<String>
     let isNoGIFsInfoHidden: Observable<Bool>
     let isNoResultsInfoHidden: Observable<Bool>
     let isActivityInProgress: Observable<Bool>
-    let numberOfColumns: Observable<Int>
     
     private let searchTextBehaviorRelay: BehaviorRelay<String>
     private let numberOfFetchesInProgress = BehaviorRelay(value: 0)
-    private let numberOfColumnsBehaviorRelay = BehaviorRelay(value: 2)
     private let gifsManager: GIFsManager
     private let objectsManager: ObjectsManager
+    private let userDefaults: UserDefaults
     private let disposeBag = DisposeBag()
     
-    init(gifsManager: GIFsManager, objectsManager: ObjectsManager) {
+    init(gifsManager: GIFsManager, objectsManager: ObjectsManager, userDefaults: UserDefaults) {
         self.gifsManager = gifsManager
         self.objectsManager = objectsManager
+        self.userDefaults = userDefaults
         gifsProvider = objectsManager.makeGIFsProvider()
         
         let searchTextBehaviorRelay = BehaviorRelay(value: "")
@@ -51,8 +59,6 @@ class FeedViewModel {
             .map { [gifsProvider] in
                 gifsProvider.numberOfObjects() == 0 && $1 > 0
             }
-        numberOfColumns = numberOfColumnsBehaviorRelay
-            .asObservable()
     }
     
     func viewDidLoad() {
@@ -65,8 +71,8 @@ class FeedViewModel {
             .disposed(by: disposeBag)
     }
     
-    func didUpdate(numberOfColumns: Int) {
-        numberOfColumnsBehaviorRelay.accept(numberOfColumns)
+    func remove(gif: GIF) {
+        objectsManager.remove(gif: gif)
     }
     
     func accept<O: ObservableType>(searchInput: O) where O.E == String {

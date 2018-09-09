@@ -50,6 +50,28 @@ class CoreDataManager: ObjectsManager {
         .observeOn(backgroundScheduler)
     }
     
+    func remove(gif: GIF) {
+        backgroundContext.performChanges { [weak self, backgroundContext] in
+            let cdGIF = CDGIF.findOrCreate(gif: gif, in: backgroundContext)
+            self?.remove(cdGIF: cdGIF)
+        }
+    }
+    
+    func remove(cdGIF: CDGIF) {
+        let gif = cdGIF.convert()
+        do {
+            try fileManager.removeItem(at: gif.localStillURL)
+        } catch {
+            Log(error.localizedDescription)
+        }
+        do {
+            try fileManager.removeItem(at: gif.localMP4URL)
+        } catch {
+            Log(error.localizedDescription)
+        }
+        backgroundContext.delete(cdGIF)
+    }
+    
     private func makeObjectsProvider<T: Convertible>(with request: NSFetchRequest<T>) -> CoreDataObjectsProvider<T> {
         request.returnsObjectsAsFaults = false
         let fetchedResultsController = NSFetchedResultsController(fetchRequest: request,
@@ -76,24 +98,13 @@ class CoreDataManager: ObjectsManager {
     }
     
     private func removeOldGIFs() {
-        backgroundContext.performChanges { [backgroundContext, fileManager] in
+        backgroundContext.performChanges { [weak self, backgroundContext] in
             let request = NSFetchRequest<CDGIF>(entityName: CDGIF.entityName)
             request.predicate = NSPredicate(format: "%K < %@", #keyPath(CDGIF.modificationDate), NSDate(timeIntervalSinceNow: -.week))
             request.returnsObjectsAsFaults = true
             let oldGIFs = try! backgroundContext.fetch(request)
             for cdOldGIF in oldGIFs {
-                let oldGIF = cdOldGIF.convert()
-                do {
-                    try fileManager.removeItem(at: oldGIF.localStillURL)
-                } catch {
-                    Log(error.localizedDescription)
-                }
-                do {
-                    try fileManager.removeItem(at: oldGIF.localMP4URL)
-                } catch {
-                    Log(error.localizedDescription)
-                }
-                backgroundContext.delete(cdOldGIF)
+                self?.remove(cdGIF: cdOldGIF)
             }
         }
     }

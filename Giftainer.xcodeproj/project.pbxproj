@@ -79,6 +79,7 @@
 		2CCF2395214575530091C561 /* RemoteMediaOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF2394214575530091C561 /* RemoteMediaOperation.swift */; };
 		2CCF239721457DBD0091C561 /* RemoteMP4Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF239621457DBD0091C561 /* RemoteMP4Operation.swift */; };
 		2CCF23992145BA450091C561 /* TimeInterval+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF23982145BA450091C561 /* TimeInterval+Extensions.swift */; };
+		2CCF239B2145D77B0091C561 /* Vibrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF239A2145D77B0091C561 /* Vibrations.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -156,6 +157,7 @@
 		2CCF2394214575530091C561 /* RemoteMediaOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMediaOperation.swift; sourceTree = "<group>"; };
 		2CCF239621457DBD0091C561 /* RemoteMP4Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMP4Operation.swift; sourceTree = "<group>"; };
 		2CCF23982145BA450091C561 /* TimeInterval+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extensions.swift"; sourceTree = "<group>"; };
+		2CCF239A2145D77B0091C561 /* Vibrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibrations.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -381,6 +383,7 @@
 				2C0EFA14214273FD005D9E60 /* ConcurrentOperation.swift */,
 				2C0EFA1221426072005D9E60 /* Logging.swift */,
 				2C1B4DF7213F373000416B2F /* ReferencesBag.swift */,
+				2CCF239A2145D77B0091C561 /* Vibrations.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -619,6 +622,7 @@
 				2CB98523213C465E00AD3CF3 /* Managed.swift in Sources */,
 				2C1EAC25213D8DC90029B24D /* AnyObjectsProvider.swift in Sources */,
 				2C4DBE67213AEC69007D2ECB /* UIFont+Extensions.swift in Sources */,
+				2CCF239B2145D77B0091C561 /* Vibrations.swift in Sources */,
 				2C9AC2FB214164D80064DBCF /* CGSize+Extensions.swift in Sources */,
 				2CCD7BD0213ADA9A002299F1 /* ViewControllersFactory.swift in Sources */,
 				2C9A2FAB2141D5D9005551D7 /* UIImage+Extensions.swift in Sources */,

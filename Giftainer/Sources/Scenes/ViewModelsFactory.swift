@@ -19,7 +19,9 @@ class ViewModelsFactory {
     }
  
     func makeFeedViewModel() -> FeedViewModel {
+        let userDefaults = UserDefaults.standard
         return FeedViewModel(gifsManager: gifsManager,
-                             objectsManager: objectsManager)
+                             objectsManager: objectsManager,
+                             userDefaults: userDefaults)
     }
 }

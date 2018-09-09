@@ -15,6 +15,10 @@ extension UIView {
         return frame.size.isPortrait
     }
     
+    var isLandscape: Bool {
+        return frame.size.isLandscape
+    }
+    
     func constraint<Axis>(for anchor1: NSLayoutAnchor<Axis>, and anchor2: NSLayoutAnchor<Axis>) -> NSLayoutConstraint? {
         for constraint in constraints {
             if constraint.firstAnchor == anchor1 && constraint.secondAnchor == anchor2
