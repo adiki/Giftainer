@@ -17,8 +17,8 @@ class FeedView: View {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
-        noGIFsLabel.constraint(for: noGIFsLabel.centerYAnchor, and: centerYAnchor)?.constant = -safeAreaInsets.top / 2
+        noGIFsLabel.constraint(for: noGIFsLabel.centerYAnchor,
+                               and: giftainerCollectionView.centerYAnchor)?.constant = -safeAreaInsets.top / 2
     }
     
     override func setupBackground() {

@@ -163,14 +163,8 @@ class FeedViewController: UIViewController {
         doubleTapGestureRecognizer.numberOfTapsRequired = 2
         doubleTapGestureRecognizer.rx.event
             .asDriver()
-            .drive(onNext: { [feedView, feedViewModel, eventsPublishSubject] doubleTapGestureRecognizer in
-                let location = doubleTapGestureRecognizer.location(in: doubleTapGestureRecognizer.view)
-                guard let indexPath = feedView.giftainerCollectionView.indexPathForItem(at: location),
-                    let cell = feedView.giftainerCollectionView.cellForItem(at: indexPath) else {
-                    return
-                }
-                let gif = feedViewModel.gifsProvider.object(at: indexPath)
-                eventsPublishSubject.onNext(.share(urlString: gif.mp4URLString, sourceView: cell))
+            .drive(onNext: { [weak self] doubleTapGestureRecognizer in
+                self?.share(with: doubleTapGestureRecognizer)
             })
             .disposed(by: disposeBag)
     }
@@ -198,6 +192,7 @@ class FeedViewController: UIViewController {
     private func configure(feedGIFCell: FeedGIFCell, gif: GIF) {
         feedGIFCell.id = gif.id
         var didVibrate = false
+        var didOpenShare = false
         feedGIFCell.panGestureRecognizer.rx.event
             .subscribe(onNext: { [weak self, feedView, feedViewModel] panGestureRecognizer in
                 guard self?.feedView.isPortrait == true
@@ -209,7 +204,11 @@ class FeedViewController: UIViewController {
                 switch panGestureRecognizer.state {
                 case .began:
                     didVibrate = false
+                    didOpenShare = false
                 case .changed:
+                    guard !didOpenShare else {
+                        return
+                    }
                     feedGIFCell.set(imageViewDeltaConstant: translationX)
                     if translationX < 0 {
                         feedGIFCell.imageView.alpha = 1 - progress
@@ -217,6 +216,15 @@ class FeedViewController: UIViewController {
                             didVibrate = true
                             vibrate()
                         }
+                    } else if translationX > 0 && progress > 0.3 {
+                        didOpenShare = true
+                        vibrate()
+                        feedGIFCell.imageView.alpha = 1
+                        feedGIFCell.set(imageViewDeltaConstant: 0)
+                        UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
+                            feedGIFCell.layoutIfNeeded()
+                            }.startAnimation()
+                        self?.share(with: panGestureRecognizer)
                     }
                 case .ended, .cancelled, .failed:
                     let velocityX = panGestureRecognizer.velocity(in: nil).x
@@ -234,6 +242,11 @@ class FeedViewController: UIViewController {
                         if completed {
                             feedViewModel.remove(gif: gif)
                         }
+                    } else {
+                        feedGIFCell.set(imageViewDeltaConstant: 0)
+                        UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
+                            feedGIFCell.layoutIfNeeded()
+                            }.startAnimation()
                     }
                 default:
                     break
@@ -263,6 +276,16 @@ class FeedViewController: UIViewController {
                 }
             })
             .disposed(by: feedGIFCell.disposeBag)
+    }
+    
+    private func share(with gestureRecognizer: UIGestureRecognizer) {
+        let location = gestureRecognizer.location(in: feedView.giftainerCollectionView)
+        guard let indexPath = feedView.giftainerCollectionView.indexPathForItem(at: location),
+            let cell = feedView.giftainerCollectionView.cellForItem(at: indexPath) else {
+                return
+        }
+        let gif = feedViewModel.gifsProvider.object(at: indexPath)
+        eventsPublishSubject.onNext(.share(urlString: gif.mp4URLString, sourceView: cell))
     }
 }
 
