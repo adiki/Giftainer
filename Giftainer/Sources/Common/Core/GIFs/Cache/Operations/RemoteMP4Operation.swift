@@ -45,8 +45,9 @@ class RemoteMP4Operation: RemoteMediaOperation {
                 resultPublishSubject.onError(error)
             }, onCompleted: { [resultPublishSubject] in
                 resultPublishSubject.onCompleted()
-            }, onDisposed: {
+            }, onDisposed: { [resultPublishSubject] in
                 self.finish()
+                resultPublishSubject.dispose()
             })
     }
     

@@ -16,11 +16,14 @@ class LocalStillOperation: LocalMediaOperation {
             if !isCancelled {
                 resultPublishSubject.onNext(image.decoded())
                 resultPublishSubject.onCompleted()
+                resultPublishSubject.dispose()
             } else {
                 resultPublishSubject.onCompleted()
+                resultPublishSubject.dispose()
             }
         } else {
-            resultPublishSubject.onError(GIFsError.imageNotPersistent)            
+            resultPublishSubject.onError(GIFsError.imageNotPersistent)
+            resultPublishSubject.dispose()
         }
     }
 }

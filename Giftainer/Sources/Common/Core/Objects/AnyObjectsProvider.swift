@@ -12,13 +12,14 @@ import RxSwift
 //This class uses Type Erasure, it's a useful technique when working with protocols with associatedtype
 class AnyObjectsProvider<T>: ObjectsProvider {
         
-    let updates: Observable<[Update<T>]>    
+    let updates: Observable<[Update]>    
     
     init<OP: ObjectsProvider>(objectsProvider: OP) where OP.Object == T {
         
         updates = objectsProvider.updates
         _numberOfObjects = objectsProvider.numberOfObjects
-        _object = objectsProvider.object(at:)
+        _object = objectsProvider.object
+        _set = objectsProvider.set
     }
     
     private let _numberOfObjects: () -> Int
@@ -31,5 +32,11 @@ class AnyObjectsProvider<T>: ObjectsProvider {
     
     func object(at indexPath: IndexPath) -> T {
         return _object(indexPath)
+    }
+    
+    private let _set: (NSPredicate) -> Void
+    
+    func set(predicate: NSPredicate) {
+        _set(predicate)
     }
 }

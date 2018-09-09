@@ -78,6 +78,7 @@
 		2CCF23932145749F0091C561 /* RemoteStillOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF23922145749F0091C561 /* RemoteStillOperation.swift */; };
 		2CCF2395214575530091C561 /* RemoteMediaOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF2394214575530091C561 /* RemoteMediaOperation.swift */; };
 		2CCF239721457DBD0091C561 /* RemoteMP4Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF239621457DBD0091C561 /* RemoteMP4Operation.swift */; };
+		2CCF23992145BA450091C561 /* TimeInterval+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF23982145BA450091C561 /* TimeInterval+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -154,6 +155,7 @@
 		2CCF23922145749F0091C561 /* RemoteStillOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteStillOperation.swift; sourceTree = "<group>"; };
 		2CCF2394214575530091C561 /* RemoteMediaOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMediaOperation.swift; sourceTree = "<group>"; };
 		2CCF239621457DBD0091C561 /* RemoteMP4Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMP4Operation.swift; sourceTree = "<group>"; };
+		2CCF23982145BA450091C561 /* TimeInterval+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -431,6 +433,7 @@
 				2C950A4E2140592F001F7C34 /* DateFormatter+Extensions.swift */,
 				2C4A04D3213FEDC800E30977 /* NSFetchedResultsController+Extensions.swift */,
 				2C4DBE5F213AE5AC007D2ECB /* String+Extensions.swift */,
+				2CCF23982145BA450091C561 /* TimeInterval+Extensions.swift */,
 				2CCF2382214524C50091C561 /* UICollectionView+Extensions.swift */,
 				2CCD7BDF213ADF5E002299F1 /* UIColor+Extensions.swift */,
 				2C4DBE66213AEC69007D2ECB /* UIFont+Extensions.swift */,
@@ -602,6 +605,7 @@
 				2CB98515213C398400AD3CF3 /* CDKeyword.swift in Sources */,
 				2C58477F213EE26800B7B80E /* GIFsManager.swift in Sources */,
 				2C4DBE6D213AFAD9007D2ECB /* Layout.swift in Sources */,
+				2CCF23992145BA450091C561 /* TimeInterval+Extensions.swift in Sources */,
 				2C950A3F21404C92001F7C34 /* GiphyResponse.swift in Sources */,
 				2C0EFA1321426072005D9E60 /* Logging.swift in Sources */,
 				2C950A322140402C001F7C34 /* WebAPIMethod.swift in Sources */,

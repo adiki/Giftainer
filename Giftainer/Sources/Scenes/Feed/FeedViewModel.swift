@@ -97,6 +97,19 @@ class FeedViewModel {
             })
             .subscribe()
             .disposed(by: disposeBag)
+        
+        searchTextBehaviorRelay
+            .map { searchText in
+                let keywords = searchText.keywords()
+                let predicates = keywords.map { keyword in
+                    NSPredicate(format: "SUBQUERY(keywords, $keyword, $keyword.value CONTAINS[cd] %@).@count > 0", keyword.value)
+                }
+                return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+            }
+            .subscribe(onNext: { [gifsProvider] predicate in
+                gifsProvider.set(predicate: predicate)
+            })
+            .disposed(by: disposeBag)
     }
     
     private func increaseNumberOfFetchesInProgress() {

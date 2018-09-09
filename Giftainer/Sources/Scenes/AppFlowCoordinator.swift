@@ -22,6 +22,29 @@ class AppFlowCoordinator: FlowCoordinator {
         navigationController = UINavigationController(rootViewController: feedViewController)
         navigationController.navigationBar.barTintColor = .snapperRocksBlue
         navigationController.navigationBar.isTranslucent = true
+        
+        feedViewController.events
+            .subscribe(onNext: { [weak self] event in
+                self?.handle(feedSceneEvent: event)
+            })
+            .disposed(by: feedViewController.disposeBag)
+    }
+    
+    private func handle(feedSceneEvent: FeedSceneEvent) {
+        switch feedSceneEvent {
+        case let .share(urlString, sourceView):
+            share(urlString: urlString, sourceView: sourceView)
+        }
+    }
+    
+    private func share(urlString: String, sourceView: UIView) {
+        let activityViewController = UIActivityViewController(activityItems: [urlString],
+                                                              applicationActivities: nil)
+        if let popoverPresentationController = activityViewController.popoverPresentationController {
+            popoverPresentationController.sourceView = sourceView
+            popoverPresentationController.sourceRect = sourceView.bounds
+        }
+        rootViewController.present(activityViewController, animated: true)
     }
     
     static func makeAppFlowCoordinator(completion: @escaping (AppFlowCoordinator) -> Void) {

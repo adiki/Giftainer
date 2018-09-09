@@ -13,12 +13,12 @@ import RxSwift
 
 class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsProvider, NSFetchedResultsControllerDelegate where CoreDataObject: NSFetchRequestResult {
     
-    let updates: Observable<[Update<CoreDataObject.ConvertedType>]>
+    let updates: Observable<[Update]>
     
-    private let updatesBehaviorRelay = BehaviorRelay<[Update<CoreDataObject.ConvertedType>]>(value: [])
+    private let updatesBehaviorRelay = BehaviorRelay<[Update]>(value: [])
     private let fetchedResultsController: NSFetchedResultsController<CoreDataObject>
     
-    private var updatesList: [Update<Object>] = []
+    private var updatesList: [Update] = []
     
     init(fetchedResultsController: NSFetchedResultsController<CoreDataObject>) {
         self.fetchedResultsController = fetchedResultsController
@@ -38,6 +38,13 @@ class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsPro
         return fetchedResultsController.object(at: indexPath).convert()
     }
     
+    func set(predicate: NSPredicate) {
+        NSFetchedResultsController<NSFetchRequestResult>.deleteCache(withName: fetchedResultsController.cacheName)
+        fetchedResultsController.fetchRequest.predicate = predicate
+        do { try fetchedResultsController.performFetch() } catch { fatalError("fetch request failed") }
+        updatesBehaviorRelay.accept([])
+    }
+    
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         updatesList = []
     }
@@ -48,9 +55,13 @@ class CoreDataObjectsProvider<CoreDataObject: Convertible>: NSObject, ObjectsPro
             guard let newIndexPath = newIndexPath else { fatalError("Index path should be not nil") }
             updatesList.append(.insert(newIndexPath))
         case .update:
+            guard let indexPath = indexPath else { fatalError("Index path should be not nil") }
             guard let newIndexPath = newIndexPath else { fatalError("Index path should be not nil") }
-            let obj = object(at: newIndexPath)
-            updatesList.append(.update(newIndexPath, obj))
+            if indexPath != newIndexPath {
+                updatesList.append(.move(indexPath, newIndexPath))
+            } else {
+                updatesList.append(.update(indexPath))
+            }
         case .move:
             guard let indexPath = indexPath else { fatalError("Index path should be not nil") }
             guard let newIndexPath = newIndexPath else { fatalError("New index path should be not nil") }

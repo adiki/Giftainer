@@ -48,14 +48,10 @@ class CollectionViewDataSource<Object, Cell: UICollectionViewCell>: NSObject, UI
         return cell
     }
     
-    private func process(updates: [Update<Object>]) {
-        
-        guard updates.count > 0 else {
-            return
-        }
+    private func process(updates: [Update]) {
         
         //iOS is not updating collection view correctly when it's not inserted into views hierarchy
-        guard collectionView.window != nil else {
+        guard updates.count > 0 && collectionView.window != nil else {
             collectionView.reloadData()
             return
         }
@@ -65,7 +61,8 @@ class CollectionViewDataSource<Object, Cell: UICollectionViewCell>: NSObject, UI
                 switch update {
                 case .insert(let indexPath):
                     self.collectionView.insertItems(at: [indexPath])
-                case .update(let indexPath, let object):
+                case .update(let indexPath):
+                    let object = objectsProvider.object(at: indexPath)
                     if let cell = self.collectionView.cellForItem(at: indexPath) as? Cell {
                         self.cellForConfigurationPublishSubject.onNext((cell, object))
                     }

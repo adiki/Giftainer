@@ -10,15 +10,22 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-//TODO make transitions reactive
+enum FeedSceneEvent {
+    case share(urlString: String, sourceView: UIView)
+}
+
 class FeedViewController: UIViewController {
     
+    let events: Observable<FeedSceneEvent>
     let disposeBag = DisposeBag()
 
     private let searchBar = UISearchBar()
     private var searchBarShouldBeginEditing = true
     private lazy var feedDataSource = CollectionViewDataSource<GIF, FeedGIFCell>(collectionView: feedView.giftainerCollectionView,
                                                                                  objectsProvider: feedViewModel.gifsProvider)
+    private let tapGestureRecognizer = UITapGestureRecognizer()
+    private let doubleTapGestureRecognizer = UITapGestureRecognizer()
+    private let eventsPublishSubject = PublishSubject<FeedSceneEvent>()
     private let referencesBag = ReferencesBag()
     
     private var feedView: FeedView {
@@ -34,8 +41,11 @@ class FeedViewController: UIViewController {
          gifsCache: GIFsCache) {
         self.feedViewModel = feedViewModel
         self.gifsCache = gifsCache
+        events = eventsPublishSubject.asObservable()
         
         super.init(nibName: nil, bundle: nil)
+        
+        eventsPublishSubject.disposed(by: disposeBag)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -54,7 +64,8 @@ class FeedViewController: UIViewController {
         setupActivityIndicator()
         setupCollectionView()
         setupKeyboardNotifications()
-        setupClosingKeyboardOnTap()
+        setupTap()
+        setupDoubleTap()
         feedViewModel.viewDidLoad()
     }
     
@@ -115,14 +126,44 @@ class FeedViewController: UIViewController {
             .disposed(by: disposeBag)        
     }
     
-    private func setupClosingKeyboardOnTap() {
-        let tapGestureRecognizer = UITapGestureRecognizer()
-        feedView.addGestureRecognizer(tapGestureRecognizer)
-        tapGestureRecognizer.delegate = self
+    private func setupTap() {
+        feedView.giftainerCollectionView.addGestureRecognizer(tapGestureRecognizer)
+        tapGestureRecognizer.require(toFail: doubleTapGestureRecognizer)
         tapGestureRecognizer.rx.event
             .asDriver()
-            .drive(onNext: { [searchBar] _ in
-                searchBar.resignFirstResponder()
+            .drive(onNext: { [weak self, searchBar] _ in
+                if searchBar.isFirstResponder {
+                    searchBar.resignFirstResponder()
+                } else {
+                    self?.updateLayout()
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func updateLayout() {
+        guard feedView.isPortrait else {
+            return
+        }
+        isLayoutMaximised = !isLayoutMaximised
+        let giftainerLayout = GiftainerLayout()
+        giftainerLayout.numberOfColumns = isLayoutMaximised ? 1 : 2
+        feedView.giftainerCollectionView.setCollectionViewLayout(giftainerLayout, animated: true)
+    }
+    
+    private func setupDoubleTap() {
+        feedView.giftainerCollectionView.addGestureRecognizer(doubleTapGestureRecognizer)
+        doubleTapGestureRecognizer.numberOfTapsRequired = 2
+        doubleTapGestureRecognizer.rx.event
+            .asDriver()
+            .drive(onNext: { [feedView, feedViewModel, eventsPublishSubject] doubleTapGestureRecognizer in
+                let location = doubleTapGestureRecognizer.location(in: doubleTapGestureRecognizer.view)
+                guard let indexPath = feedView.giftainerCollectionView.indexPathForItem(at: location),
+                    let cell = feedView.giftainerCollectionView.cellForItem(at: indexPath) else {
+                    return
+                }
+                let gif = feedViewModel.gifsProvider.object(at: indexPath)
+                eventsPublishSubject.onNext(.share(urlString: gif.mp4URLString, sourceView: cell))
             })
             .disposed(by: disposeBag)
     }
@@ -149,9 +190,13 @@ class FeedViewController: UIViewController {
     
     private func configure(feedGIFCell: FeedGIFCell, gif: GIF) {
         feedGIFCell.contentView.backgroundColor = gif.id.color
+        feedGIFCell.id = gif.id
         Observable.concat(gifsCache.image(for: gif), gifsCache.animatedImage(for: gif))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { event in
+                guard feedGIFCell.id == gif.id else {
+                    return
+                }
                 switch event {
                 case .progress(let progress):
                     feedGIFCell.progressView.isHidden = false
@@ -177,16 +222,6 @@ extension FeedViewController: GiftainerLayoutDelegate {
     func collectionView(_ collectionView: UICollectionView, sizeAtIndexPath indexPath: IndexPath) -> CGSize {
         let gif = feedViewModel.gifsProvider.object(at: indexPath)
         return CGSize(width: gif.width, height: gif.height)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard feedView.isPortrait else {
-            return
-        }
-        isLayoutMaximised = !isLayoutMaximised
-        let giftainerLayout = GiftainerLayout()
-        giftainerLayout.numberOfColumns = isLayoutMaximised ? 1 : 2
-        feedView.giftainerCollectionView.setCollectionViewLayout(giftainerLayout, animated: true)
     }
 }
 
@@ -217,12 +252,5 @@ extension FeedViewController: UISearchBarDelegate {
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchBarShouldBeginEditing = searchBar.isFirstResponder
-    }
-}
-
-extension FeedViewController: UIGestureRecognizerDelegate {
-
-    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        return searchBar.isFirstResponder
     }
 }

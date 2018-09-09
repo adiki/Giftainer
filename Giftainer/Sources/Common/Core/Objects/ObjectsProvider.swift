@@ -13,8 +13,9 @@ protocol ObjectsProvider {
     
     associatedtype Object
     
-    var updates: Observable<[Update<Object>]> { get }
+    var updates: Observable<[Update]> { get }
     
     func numberOfObjects() -> Int
     func object(at indexPath: IndexPath) -> Object
+    func set(predicate: NSPredicate)
 }

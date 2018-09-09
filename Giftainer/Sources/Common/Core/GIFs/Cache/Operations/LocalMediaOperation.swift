@@ -24,5 +24,6 @@ class LocalMediaOperation: Operation {
     override func cancel() {
         super.cancel()
         resultPublishSubject.onCompleted()
+        resultPublishSubject.dispose()
     }
 }

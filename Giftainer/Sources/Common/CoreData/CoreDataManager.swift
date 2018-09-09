@@ -13,18 +13,22 @@ import RxSwift
 class CoreDataManager: ObjectsManager {    
     
     private let persistentContainer: NSPersistentContainer
+    private let fileManager: FileManager
     private let mainContext: NSManagedObjectContext
     private let backgroundContext: NSManagedObjectContext
     private var tokens: [Any] = []
     private let backgroundScheduler = ConcurrentDispatchQueueScheduler(qos: .userInitiated)
     
-    init(persistentContainer: NSPersistentContainer) {
+    init(persistentContainer: NSPersistentContainer, fileManager: FileManager) {
         self.persistentContainer = persistentContainer
+        self.fileManager = fileManager
         mainContext = persistentContainer.viewContext
         backgroundContext = persistentContainer.newBackgroundContext()
         
         setupQueryGenerations()
         setupContextNotificationObserving()
+        
+        removeOldGIFs()
     }
     
     func makeGIFsProvider() -> AnyObjectsProvider<GIF> {
@@ -71,6 +75,29 @@ class CoreDataManager: ObjectsManager {
         })
     }
     
+    private func removeOldGIFs() {
+        backgroundContext.performChanges { [backgroundContext, fileManager] in
+            let request = NSFetchRequest<CDGIF>(entityName: CDGIF.entityName)
+            request.predicate = NSPredicate(format: "%K < %@", #keyPath(CDGIF.modificationDate), NSDate(timeIntervalSinceNow: -.week))
+            request.returnsObjectsAsFaults = true
+            let oldGIFs = try! backgroundContext.fetch(request)
+            for cdOldGIF in oldGIFs {
+                let oldGIF = cdOldGIF.convert()
+                do {
+                    try fileManager.removeItem(at: oldGIF.localStillURL)
+                } catch {
+                    Log(error.localizedDescription)
+                }
+                do {
+                    try fileManager.removeItem(at: oldGIF.localMP4URL)
+                } catch {
+                    Log(error.localizedDescription)
+                }
+                backgroundContext.delete(cdOldGIF)
+            }
+        }
+    }
+    
     static func makeObjectsManager(completion: @escaping (ObjectsManager) -> Void) {
         let persistentContainer = NSPersistentContainer(name: "Giftainer", managedObjectModel: managedObjectModel)
         let storeURL = URL.documents.appendingPathComponent("Giftainer.giftainer")
@@ -82,7 +109,9 @@ class CoreDataManager: ObjectsManager {
             if let error = error {
                 fatalError("\(error)")
             } else {
-                let coreDataManager = CoreDataManager(persistentContainer: persistentContainer)
+                let fileManager = FileManager.default
+                let coreDataManager = CoreDataManager(persistentContainer: persistentContainer,
+                                                      fileManager: fileManager)
                 completion(coreDataManager)
             }
         }

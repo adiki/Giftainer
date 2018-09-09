@@ -12,12 +12,13 @@ import UIKit
 
 class FeedGIFCell: CollectionViewCell {
     
+    var id: String?
+    
     let imageView = UIImageView()
     let progressView  = UIProgressView()
     let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
     
     private(set) var disposeBag = DisposeBag()
-    
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -26,10 +27,6 @@ class FeedGIFCell: CollectionViewCell {
         progressView.progress = 0
         progressView.isHidden = true
         activityIndicatorView.startAnimating()
-    }
-    
-    func dispose() {
-        disposeBag = DisposeBag()
     }
     
     override func setupBackground() {

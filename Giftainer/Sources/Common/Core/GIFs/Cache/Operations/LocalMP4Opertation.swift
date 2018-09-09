@@ -29,6 +29,7 @@ class LocalMP4Opertation: LocalMediaOperation {
         }
         resultPublishSubject.onNext(animatedImage)
         resultPublishSubject.onCompleted()
+        resultPublishSubject.dispose()
     }
     
     private func computeNumberOfFrames(for asset: AVAsset) -> Int? {

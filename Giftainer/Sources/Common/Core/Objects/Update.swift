@@ -8,9 +8,9 @@
 
 import Foundation
 
-enum Update<Object> {
+enum Update {
     case insert(IndexPath)
-    case update(IndexPath, Object)
+    case update(IndexPath)
     case move(IndexPath, IndexPath)
     case delete(IndexPath)
 }

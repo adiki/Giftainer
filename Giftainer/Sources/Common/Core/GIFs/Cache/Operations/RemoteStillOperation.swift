@@ -44,8 +44,9 @@ class RemoteStillOperation: RemoteMediaOperation {
                 resultPublishSubject.onError(error)
             }, onCompleted: { [resultPublishSubject] in
                 resultPublishSubject.onCompleted()
-            }, onDisposed: {
-                self.finish()
+            }, onDisposed: { [resultPublishSubject] in
+                    self.finish()
+                    resultPublishSubject.dispose()
             })
     }
     
