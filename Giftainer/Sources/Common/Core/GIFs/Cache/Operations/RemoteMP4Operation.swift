@@ -16,17 +16,18 @@ class RemoteMP4Operation: RemoteMediaOperation {
     let result: Observable<WebAPICommunicator.DownloadEvent>
     let resultPublishSubject = PublishSubject<WebAPICommunicator.DownloadEvent>()
     
-    override init(webAPICommunicator: WebAPICommunicator, remoteURLString: String, localURL: URL, fileManager: FileManager) {
+    override init(webAPICommunicator: WebAPICommunicator, remoteURLString: String, localURL: URL, fileManager: FileManager, logger: Logger) {
         result = resultPublishSubject.asObservable()
         super.init(webAPICommunicator: webAPICommunicator,
                    remoteURLString: remoteURLString,
                    localURL: localURL,
-                   fileManager: fileManager)
+                   fileManager: fileManager,
+                   logger: logger)
     }
     
     override func execute() {
         disposable = webAPICommunicator.download(urlString: remoteURLString)
-            .flatMap { [fileManager, localURL] event -> Observable<WebAPICommunicator.DownloadEvent> in
+            .flatMap { [fileManager, logger, localURL] event -> Observable<WebAPICommunicator.DownloadEvent> in
                 if case .url(let url) = event {
                     do {
                         try fileManager.createDirectory(at: localURL.deletingLastPathComponent(),
@@ -34,7 +35,7 @@ class RemoteMP4Operation: RemoteMediaOperation {
                                                         attributes: nil)
                         try fileManager.moveItem(at: url, to: localURL)
                     } catch {
-                        Log(error.localizedDescription)
+                        logger.log(error.localizedDescription)
                         return .error(GIFsError.cannotSaveMP4OnDisk)
                     }
                 }

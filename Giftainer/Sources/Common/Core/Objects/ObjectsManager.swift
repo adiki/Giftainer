@@ -15,5 +15,5 @@ protocol ObjectsManager {
     func save(gifs: [GIF]) -> Completable
     func remove(gif: GIF)
     
-    static func makeObjectsManager(completion: @escaping (ObjectsManager) -> Void)
+    static func makeObjectsManager(logger: Logger, completion: @escaping (ObjectsManager) -> Void)
 }

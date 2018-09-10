@@ -34,11 +34,14 @@ class FeedViewController: UIViewController {
     
     private let feedViewModel: FeedViewModel
     private let gifsCache: GIFsCache
+    private let vibrationPerformer: VibrationPerformer
     
     init(feedViewModel: FeedViewModel,
-         gifsCache: GIFsCache) {
+         gifsCache: GIFsCache,
+         vibrationPerformer: VibrationPerformer) {
         self.feedViewModel = feedViewModel
         self.gifsCache = gifsCache
+        self.vibrationPerformer = vibrationPerformer
         events = eventsPublishSubject.asObservable()
         
         super.init(nibName: nil, bundle: nil)
@@ -220,7 +223,7 @@ class FeedViewController: UIViewController {
         var didVibrate = false
         var didOpenShare = false
         feedGIFCell.panGestureRecognizer.rx.event
-            .subscribe(onNext: { [weak self, feedView, feedViewModel] panGestureRecognizer in
+            .subscribe(onNext: { [weak self, feedView, feedViewModel, vibrationPerformer] panGestureRecognizer in
                 guard feedView.isPortrait && feedViewModel.isLayoutMaximised else {
                     return
                 }
@@ -240,11 +243,11 @@ class FeedViewController: UIViewController {
                         feedGIFCell.imageView.alpha = 1 - progress
                         if !didVibrate && progress > 0.5 {
                             didVibrate = true
-                            vibrate()
+                            vibrationPerformer.vibrate()
                         }
                     } else if translationX > 0 && progress > 0.3 {
                         didOpenShare = true
-                        vibrate()
+                        vibrationPerformer.vibrate()
                         self?.share(with: panGestureRecognizer)
                     }
                 case .ended, .cancelled, .failed:
@@ -254,7 +257,7 @@ class FeedViewController: UIViewController {
                         let completed = progress > 0.5 || velocityX < -500                                                
                         if !didVibrate && completed {
                             didVibrate = true
-                            vibrate()
+                            vibrationPerformer.vibrate()
                         }
                         if completed {
                             feedViewModel.remove(gif: gif)
@@ -299,6 +302,11 @@ class FeedViewController: UIViewController {
                         feedGIFCell.activityIndicatorView.stopAnimating()
                     }
                 }
+            }, onError: { error in
+                guard feedGIFCell.id == gif.id else {
+                    return
+                }
+                feedGIFCell.progressView.isHidden = true
             })
             .disposed(by: feedGIFCell.disposeBag)
     }
@@ -337,7 +345,7 @@ extension FeedViewController: GiftainerLayoutDelegate {
             showTooltip()
         } else if feedView.isPortrait && feedViewModel.isLayoutMaximised && !feedViewModel.wasSwipeTooltipPresented {
             feedViewModel.wasSwipeTooltipPresented = true
-            feedView.tooltipLabel.text = "\(String.Swipe_right_shares_gif)\n\(String.Swipe_left_deletes_gif)"
+            feedView.tooltipLabel.text = "\(String.Swipe_right_shares_gif)\n\(String.Swipe_left_deletes_gif)\n\(String.Single_tap_minimises_layout)"
             showTooltip()
         }
     }

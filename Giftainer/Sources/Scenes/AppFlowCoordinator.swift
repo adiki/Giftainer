@@ -48,16 +48,18 @@ class AppFlowCoordinator: FlowCoordinator {
     }
     
     static func makeAppFlowCoordinator(completion: @escaping (AppFlowCoordinator) -> Void) {
-        CoreDataManager.makeObjectsManager { objectsManager in
-            let webAPICommunicator = WebAPICommunicator.makeWebAPICommunicator()
+        let logger = Logger()
+        CoreDataManager.makeObjectsManager(logger: logger) { objectsManager in
+            let webAPICommunicator = WebAPICommunicator.makeWebAPICommunicator(logger: logger)
             let gifsMetadataFetcher = GiphyMetadataFetcher(webAPICommunicator: webAPICommunicator)
             let gifsManager = GIFsManager(gifsMetadataFetcher: gifsMetadataFetcher,
                                           objectsManager: objectsManager)
             let viewModelsFactory = ViewModelsFactory(gifsManager: gifsManager,
                                                       objectsManager: objectsManager)
-            let fileManager = FileManager.default
+            let fileManager = FileManager.default            
             let gifsCache = GIFsCache(fileManager: fileManager,
-                                      webAPICommunicator: webAPICommunicator)
+                                      webAPICommunicator: webAPICommunicator,
+                                      logger: logger)
             let viewControllersFactory = ViewControllersFactory(viewModelsFactory: viewModelsFactory,
                                                                 gifsCache: gifsCache)
             let appFlowCoordinator = AppFlowCoordinator(viewControllersFactory: viewControllersFactory)

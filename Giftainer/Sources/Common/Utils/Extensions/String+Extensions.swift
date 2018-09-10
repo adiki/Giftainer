@@ -16,6 +16,7 @@ extension String {
     static let No_results_found = localize("No_results_found")
     static let We_have_an_issue_will_get_back_to_you = localize("We_have_an_issue_will_get_back_to_you")
     static let Single_tap_maximises_layout = localize("Single_tap_maximises_layout")
+    static let Single_tap_minimises_layout = localize("Single_tap_minimises_layout")
     static let Double_tap_shares_gif = localize("Double_tap_shares_gif")
     static let Swipe_right_shares_gif = localize("Swipe_right_shares_gif")
     static let Swipe_left_deletes_gif = localize("Swipe_left_deletes_gif")

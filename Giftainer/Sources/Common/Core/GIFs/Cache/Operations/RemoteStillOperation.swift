@@ -16,17 +16,18 @@ class RemoteStillOperation: RemoteMediaOperation {
     let result: Observable<WebAPICommunicator.DataEvent>
     private let resultPublishSubject = PublishSubject<WebAPICommunicator.DataEvent>()
     
-    override init(webAPICommunicator: WebAPICommunicator, remoteURLString: String, localURL: URL, fileManager: FileManager) {
+    override init(webAPICommunicator: WebAPICommunicator, remoteURLString: String, localURL: URL, fileManager: FileManager, logger: Logger) {
         result = resultPublishSubject.asObservable()
         super.init(webAPICommunicator: webAPICommunicator,
                    remoteURLString: remoteURLString,
                    localURL: localURL,
-                   fileManager: fileManager)
+                   fileManager: fileManager,
+                   logger: logger)
     }
     
     override func execute() {
         disposable = webAPICommunicator.data(urlString: remoteURLString)
-            .flatMap { [fileManager, localURL] event -> Observable<WebAPICommunicator.DataEvent> in
+            .flatMap { [fileManager, logger, localURL] event -> Observable<WebAPICommunicator.DataEvent> in
                 if case .data(let data) = event {
                     do {
                         try fileManager.createDirectory(at: localURL.deletingLastPathComponent(),
@@ -34,7 +35,7 @@ class RemoteStillOperation: RemoteMediaOperation {
                                                         attributes: nil)
                         try data.write(to: localURL)
                     } catch {
-                        Log(error.localizedDescription)
+                        logger.log(error.localizedDescription)
                         return .error(GIFsError.cannotSaveImageOnDisk)
                     }
                 }

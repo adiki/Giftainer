@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2C0EFA1321426072005D9E60 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0EFA1221426072005D9E60 /* Logging.swift */; };
+		2C0EFA1321426072005D9E60 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0EFA1221426072005D9E60 /* Logger.swift */; };
 		2C0EFA15214273FD005D9E60 /* ConcurrentOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0EFA14214273FD005D9E60 /* ConcurrentOperation.swift */; };
 		2C1B4DF8213F373000416B2F /* ReferencesBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1B4DF7213F373000416B2F /* ReferencesBag.swift */; };
 		2C1EAC25213D8DC90029B24D /* AnyObjectsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1EAC24213D8DC90029B24D /* AnyObjectsProvider.swift */; };
@@ -80,11 +80,11 @@
 		2CCF2395214575530091C561 /* RemoteMediaOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF2394214575530091C561 /* RemoteMediaOperation.swift */; };
 		2CCF239721457DBD0091C561 /* RemoteMP4Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF239621457DBD0091C561 /* RemoteMP4Operation.swift */; };
 		2CCF23992145BA450091C561 /* TimeInterval+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF23982145BA450091C561 /* TimeInterval+Extensions.swift */; };
-		2CCF239B2145D77B0091C561 /* Vibrations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF239A2145D77B0091C561 /* Vibrations.swift */; };
+		2CCF239B2145D77B0091C561 /* VibrationPerformer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CCF239A2145D77B0091C561 /* VibrationPerformer.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2C0EFA1221426072005D9E60 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		2C0EFA1221426072005D9E60 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		2C0EFA14214273FD005D9E60 /* ConcurrentOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrentOperation.swift; sourceTree = "<group>"; };
 		2C1B4DF7213F373000416B2F /* ReferencesBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferencesBag.swift; sourceTree = "<group>"; };
 		2C1EAC24213D8DC90029B24D /* AnyObjectsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyObjectsProvider.swift; sourceTree = "<group>"; };
@@ -159,7 +159,7 @@
 		2CCF2394214575530091C561 /* RemoteMediaOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMediaOperation.swift; sourceTree = "<group>"; };
 		2CCF239621457DBD0091C561 /* RemoteMP4Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMP4Operation.swift; sourceTree = "<group>"; };
 		2CCF23982145BA450091C561 /* TimeInterval+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TimeInterval+Extensions.swift"; sourceTree = "<group>"; };
-		2CCF239A2145D77B0091C561 /* Vibrations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vibrations.swift; sourceTree = "<group>"; };
+		2CCF239A2145D77B0091C561 /* VibrationPerformer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VibrationPerformer.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -383,9 +383,9 @@
 				2CCD7BDE213ADF49002299F1 /* Extensions */,
 				2CB98527213C56A500AD3CF3 /* Notifications */,
 				2C0EFA14214273FD005D9E60 /* ConcurrentOperation.swift */,
-				2C0EFA1221426072005D9E60 /* Logging.swift */,
+				2C0EFA1221426072005D9E60 /* Logger.swift */,
 				2C1B4DF7213F373000416B2F /* ReferencesBag.swift */,
-				2CCF239A2145D77B0091C561 /* Vibrations.swift */,
+				2CCF239A2145D77B0091C561 /* VibrationPerformer.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -614,7 +614,7 @@
 				2C4DBE6D213AFAD9007D2ECB /* Layout.swift in Sources */,
 				2CCF23992145BA450091C561 /* TimeInterval+Extensions.swift in Sources */,
 				2C950A3F21404C92001F7C34 /* GiphyResponse.swift in Sources */,
-				2C0EFA1321426072005D9E60 /* Logging.swift in Sources */,
+				2C0EFA1321426072005D9E60 /* Logger.swift in Sources */,
 				2C950A322140402C001F7C34 /* WebAPIMethod.swift in Sources */,
 				2CB9852F213C570400AD3CF3 /* KeyboardNotifications.swift in Sources */,
 				2CB98507213C352A00AD3CF3 /* ObjectsManager.swift in Sources */,
@@ -626,7 +626,7 @@
 				2CB98523213C465E00AD3CF3 /* Managed.swift in Sources */,
 				2C1EAC25213D8DC90029B24D /* AnyObjectsProvider.swift in Sources */,
 				2C4DBE67213AEC69007D2ECB /* UIFont+Extensions.swift in Sources */,
-				2CCF239B2145D77B0091C561 /* Vibrations.swift in Sources */,
+				2CCF239B2145D77B0091C561 /* VibrationPerformer.swift in Sources */,
 				2C9AC2FB214164D80064DBCF /* CGSize+Extensions.swift in Sources */,
 				2CCD7BD0213ADA9A002299F1 /* ViewControllersFactory.swift in Sources */,
 				2C9A2FAB2141D5D9005551D7 /* UIImage+Extensions.swift in Sources */,

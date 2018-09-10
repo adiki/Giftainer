@@ -16,11 +16,13 @@ class RemoteMediaOperation: ConcurrentOperation {
     let remoteURLString: String
     let localURL: URL
     let fileManager: FileManager
+    let logger: Logger
     
-    init(webAPICommunicator: WebAPICommunicator, remoteURLString: String, localURL: URL, fileManager: FileManager) {
+    init(webAPICommunicator: WebAPICommunicator, remoteURLString: String, localURL: URL, fileManager: FileManager, logger: Logger) {
         self.webAPICommunicator = webAPICommunicator
         self.remoteURLString = remoteURLString
         self.localURL = localURL
-        self.fileManager = fileManager    
+        self.fileManager = fileManager
+        self.logger = logger
     }
 }

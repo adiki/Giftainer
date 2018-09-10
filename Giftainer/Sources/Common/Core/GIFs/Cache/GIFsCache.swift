@@ -19,15 +19,17 @@ class GIFsCache {
     
     private let fileManager: FileManager
     private let webAPICommunicator: WebAPICommunicator
+    private let logger: Logger
     private let networkOperationQueue = OperationQueue()
     private let imagesOperationQueue = OperationQueue()
     private let animatedImagesOperationQueue = OperationQueue()
     private let cache = NSCache<NSString, UIImage>()
     private let serialQueue = DispatchQueue(label: "GIFsCache")
     
-    init(fileManager: FileManager, webAPICommunicator: WebAPICommunicator) {
+    init(fileManager: FileManager, webAPICommunicator: WebAPICommunicator, logger: Logger) {
         self.fileManager = fileManager
         self.webAPICommunicator = webAPICommunicator
+        self.logger = logger
         
         networkOperationQueue.maxConcurrentOperationCount = 5
         imagesOperationQueue.maxConcurrentOperationCount = 15
@@ -43,12 +45,13 @@ class GIFsCache {
         
         return still(forLocalURL: gif.localStillURL)
             .asObservable()
-            .catchError { [networkOperationQueue, webAPICommunicator, fileManager] _ in
+            .catchError { [networkOperationQueue, webAPICommunicator, fileManager, logger] _ in
                 return Observable.create({ observer in
                     let remoteStillOperation = RemoteStillOperation(webAPICommunicator: webAPICommunicator,
                                                                     remoteURLString: gif.stillURLString,
                                                                     localURL: gif.localStillURL,
-                                                                    fileManager: fileManager)
+                                                                    fileManager: fileManager,
+                                                                    logger: logger)
                     let disposable = remoteStillOperation.result
                         .flatMap { dataEvent -> Observable<Event> in
                             switch dataEvent {
@@ -79,12 +82,13 @@ class GIFsCache {
 
         return animatedImage(forLocalURL: gif.localMP4URL)
             .asObservable()
-            .catchError { [networkOperationQueue, webAPICommunicator, fileManager] _ in
+            .catchError { [networkOperationQueue, webAPICommunicator, fileManager, logger] _ in
                 return Observable.create({ observer in
                     let remoteMP4Operation = RemoteMP4Operation(webAPICommunicator: webAPICommunicator,
                                                                 remoteURLString: gif.mp4URLString,
                                                                 localURL: gif.localMP4URL,
-                                                                fileManager: fileManager)
+                                                                fileManager: fileManager,
+                                                                logger: logger)
                     let disposable = remoteMP4Operation.result
                         .flatMap { dataEvent -> Observable<Event> in
                             switch dataEvent {

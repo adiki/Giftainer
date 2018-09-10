@@ -14,14 +14,16 @@ class CoreDataManager: ObjectsManager {
     
     private let persistentContainer: NSPersistentContainer
     private let fileManager: FileManager
+    private let logger: Logger
     private let mainContext: NSManagedObjectContext
     private let backgroundContext: NSManagedObjectContext
     private var tokens: [Any] = []
     private let backgroundScheduler = ConcurrentDispatchQueueScheduler(qos: .userInitiated)
     
-    init(persistentContainer: NSPersistentContainer, fileManager: FileManager) {
+    init(persistentContainer: NSPersistentContainer, fileManager: FileManager, logger: Logger) {
         self.persistentContainer = persistentContainer
         self.fileManager = fileManager
+        self.logger = logger
         mainContext = persistentContainer.viewContext
         backgroundContext = persistentContainer.newBackgroundContext()
         
@@ -62,12 +64,12 @@ class CoreDataManager: ObjectsManager {
         do {
             try fileManager.removeItem(at: gif.localStillURL)
         } catch {
-            Log(error.localizedDescription)
+            logger.log(error.localizedDescription)
         }
         do {
             try fileManager.removeItem(at: gif.localMP4URL)
         } catch {
-            Log(error.localizedDescription)
+            logger.log(error.localizedDescription)
         }
         backgroundContext.delete(cdGIF)
     }
@@ -109,7 +111,7 @@ class CoreDataManager: ObjectsManager {
         }
     }
     
-    static func makeObjectsManager(completion: @escaping (ObjectsManager) -> Void) {
+    static func makeObjectsManager(logger: Logger, completion: @escaping (ObjectsManager) -> Void) {
         let persistentContainer = NSPersistentContainer(name: "Giftainer", managedObjectModel: managedObjectModel)
         let storeURL = URL.documents.appendingPathComponent("Giftainer.giftainer")
         let storeDescription = NSPersistentStoreDescription(url: storeURL)
@@ -122,7 +124,8 @@ class CoreDataManager: ObjectsManager {
             } else {
                 let fileManager = FileManager.default
                 let coreDataManager = CoreDataManager(persistentContainer: persistentContainer,
-                                                      fileManager: fileManager)
+                                                      fileManager: fileManager,
+                                                      logger: logger)
                 completion(coreDataManager)
             }
         }

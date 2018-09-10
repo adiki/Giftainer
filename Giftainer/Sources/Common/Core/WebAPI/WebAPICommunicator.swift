@@ -37,24 +37,26 @@ class WebAPICommunicator: NSObject {
     private var urlSession: URLSession!
     private var fileManager: FileManager
     private let decoder: JSONDecoder
+    private let logger: Logger
     private var dataObservers = [Int: (AnyObserver<DataEvent>, Data)]()
     private var downloadObservers = [Int: AnyObserver<DownloadEvent>]()
     private let observersQueue = DispatchQueue(label: "WebAPICommunicator",
                                                qos: .userInitiated,
                                                attributes: .concurrent)
     
-    init(fileManager: FileManager, decoder: JSONDecoder) {
+    init(fileManager: FileManager, decoder: JSONDecoder, logger: Logger) {
         self.fileManager = fileManager
         self.decoder = decoder
+        self.logger = logger
         decoder.dateDecodingStrategy = .formatted(.webAPIDateFormater)
         super.init()
         Logging.URLRequests = { _ in return true }
     }
     
-    static func makeWebAPICommunicator() -> WebAPICommunicator {
+    static func makeWebAPICommunicator(logger: Logger) -> WebAPICommunicator {
         let fileManager = FileManager.default
         let decoder = JSONDecoder()
-        let webAPICommunicator = WebAPICommunicator(fileManager: fileManager, decoder: decoder)
+        let webAPICommunicator = WebAPICommunicator(fileManager: fileManager, decoder: decoder, logger: logger)
         let configuration = URLSessionConfiguration.default
         webAPICommunicator.urlSession = URLSession(configuration: configuration,
                                                    delegate: webAPICommunicator,
@@ -162,7 +164,7 @@ extension WebAPICommunicator: URLSessionDownloadDelegate {
         do {
             try fileManager.moveItem(at: location, to: temporaryDocumentsMP4URL)
         } catch {
-            Log(error.localizedDescription)
+            logger.log(error.localizedDescription)            
         }
         
         observersQueue.async(flags: .barrier) { [weak self] in

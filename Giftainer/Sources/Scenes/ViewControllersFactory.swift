@@ -19,8 +19,10 @@ class ViewControllersFactory {
     }
     
     func makeFeedViewController() -> FeedViewController {
-        let feedViewModel = viewModelsFactory.makeFeedViewModel()        
+        let feedViewModel = viewModelsFactory.makeFeedViewModel()
+        let vibrationPerformer = VibrationPerformer()
         return FeedViewController(feedViewModel: feedViewModel,
-                                  gifsCache: gifsCache)
+                                  gifsCache: gifsCache,
+                                  vibrationPerformer: vibrationPerformer)
     }
 }
