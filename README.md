@@ -12,3 +12,7 @@ Giftainer implementation is based on some great exisiting concepts:
 ## Notes
 
 ViewModels are using RxCocoa to access BehaviorRelay. Related issue is described here: https://github.com/ReactiveX/RxSwift/issues/1501
+
+![](Screens/IMG_2979.jpeg)
+![](Screens/IMG_2980.jpeg)
+![](Screens/IMG_2981.jpeg)
