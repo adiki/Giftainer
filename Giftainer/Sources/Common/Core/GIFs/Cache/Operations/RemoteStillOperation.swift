@@ -11,10 +11,10 @@ import RxSwift
 
 class RemoteStillOperation: RemoteMediaOperation {
     
-    var disposable: Disposable?
+    private var disposable: Disposable?
     
     let result: Observable<WebAPICommunicator.DataEvent>
-    let resultPublishSubject = PublishSubject<WebAPICommunicator.DataEvent>()
+    private let resultPublishSubject = PublishSubject<WebAPICommunicator.DataEvent>()
     
     override init(webAPICommunicator: WebAPICommunicator, remoteURLString: String, localURL: URL, fileManager: FileManager) {
         result = resultPublishSubject.asObservable()
@@ -26,13 +26,7 @@ class RemoteStillOperation: RemoteMediaOperation {
     
     override func execute() {
         disposable = webAPICommunicator.data(urlString: remoteURLString)
-            .do(onNext: { [weak self, resultPublishSubject, fileManager, localURL] event in
-                if fileManager.fileExists(atPath: localURL.path) {
-                    if let data = try? Data(contentsOf: localURL) {
-                        resultPublishSubject.onNext(.data(data))
-                    }                    
-                    self?.cancel()
-                }
+            .flatMap { [fileManager, localURL] event -> Observable<WebAPICommunicator.DataEvent> in
                 if case .data(let data) = event {
                     do {
                         try fileManager.createDirectory(at: localURL.deletingLastPathComponent(),
@@ -41,18 +35,17 @@ class RemoteStillOperation: RemoteMediaOperation {
                         try data.write(to: localURL)
                     } catch {
                         Log(error.localizedDescription)
+                        return .error(GIFsError.cannotSaveImageOnDisk)
                     }
                 }
+                return .just(event)
+            }
+            .do(onDispose: { [weak self] in
+                self?.finish()
             })
-            .subscribe(onNext: { [resultPublishSubject] event in
-                resultPublishSubject.onNext(event)
-            }, onError: { [resultPublishSubject] error in
-                resultPublishSubject.onError(error)
-            }, onCompleted: { [resultPublishSubject] in
-                resultPublishSubject.onCompleted()
-            }, onDisposed: {
-                self.finish()                
-            })
+            .subscribe { [weak self] event in
+                self?.resultPublishSubject.on(event)
+            }
     }
     
     override func cancel() {

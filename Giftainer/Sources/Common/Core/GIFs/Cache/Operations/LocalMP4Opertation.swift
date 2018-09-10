@@ -15,10 +15,10 @@ class LocalMP4Opertation: LocalMediaOperation {
     private static let ciContext = EAGLContext(api: .openGLES2).map(CIContext.init) ?? CIContext(options: nil)
     
     private let maxGIFLength: Int = {
-        let physicalMemory = ProcessInfo.processInfo.physicalMemory / (1024 * 1024)
-        if physicalMemory > 2500 {
+        let physicalMemoryMegabytes = ProcessInfo.processInfo.physicalMemory.megaBytes
+        if physicalMemoryMegabytes > 2500 {
             return 26
-        } else if physicalMemory > 1500 {
+        } else if physicalMemoryMegabytes > 1500 {
             return 17
         } else {
             return 9
@@ -29,13 +29,14 @@ class LocalMP4Opertation: LocalMediaOperation {
         let asset = AVAsset(url: url)
         guard let numberOfFrames = computeNumberOfFrames(for: asset),
             let images = extractImages(for: asset, numberOfFrames: numberOfFrames, maxLength: maxGIFLength) else {
-            resultPublishSubject.onError(GIFsError.mp4NotPersistent)
+            let error: GIFsError = isCancelled ? .mp4NotPersistent : .operationCancelled
+            resultPublishSubject.onError(error)
             return
         }
         
         let duration = CMTimeGetSeconds(asset.duration) * Float64(images.count) / Float64(numberOfFrames)
         guard let animatedImage = UIImage.animatedImage(with: images, duration: duration) else {
-            resultPublishSubject.onError(GIFsError.mp4NotPersistent)
+            resultPublishSubject.onError(GIFsError.cannotCreateAnimatedImage)
             return
         }
         resultPublishSubject.onNext(animatedImage)
@@ -68,7 +69,7 @@ class LocalMP4Opertation: LocalMediaOperation {
         var index = 0
         let startIndex = max(0, (numberOfFrames - maxLength) / 2)
         while !isCancelled, let sampleBuffer = sample {
-            if startIndex <= index {
+            if index >= startIndex {
                 if images.count < maxLength {
                     if let cvImageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) {
                         let ciImage = CIImage(cvImageBuffer: cvImageBuffer)

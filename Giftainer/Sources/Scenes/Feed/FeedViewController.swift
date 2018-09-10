@@ -103,12 +103,12 @@ class FeedViewController: UIViewController {
     private func setupTooltip() {
         feedView.tooltipButton.rx.tap
             .bind { [weak self] in
-                self?.hideGIF()
+                self?.hideTooltip()
             }
             .disposed(by: disposeBag)
     }
     
-    private func hideGIF() {
+    private func hideTooltip() {
         guard feedView.tooltipView.alpha > 0 else {
             return
         }
@@ -170,7 +170,7 @@ class FeedViewController: UIViewController {
         guard feedView.isPortrait else {
             return
         }
-        hideGIF()
+        hideTooltip()
         feedViewModel.isLayoutMaximised = !feedViewModel.isLayoutMaximised
         let giftainerLayout = GiftainerLayout()
         giftainerLayout.numberOfColumns = feedViewModel.isLayoutMaximised ? 1 : 2
@@ -183,7 +183,7 @@ class FeedViewController: UIViewController {
         doubleTapGestureRecognizer.rx.event
             .asDriver()
             .drive(onNext: { [weak self] doubleTapGestureRecognizer in
-                self?.hideGIF()
+                self?.hideTooltip()
                 self?.share(with: doubleTapGestureRecognizer)
             })
             .disposed(by: disposeBag)
@@ -211,6 +211,12 @@ class FeedViewController: UIViewController {
     
     private func configure(feedGIFCell: FeedGIFCell, gif: GIF) {
         feedGIFCell.id = gif.id
+        
+        configurePanGestureRecognizer(for: feedGIFCell, gif: gif)
+        configureImage(for: feedGIFCell, gif: gif)
+    }
+    
+    private func configurePanGestureRecognizer(for feedGIFCell: FeedGIFCell, gif: GIF) {
         var didVibrate = false
         var didOpenShare = false
         feedGIFCell.panGestureRecognizer.rx.event
@@ -224,7 +230,7 @@ class FeedViewController: UIViewController {
                 case .began:
                     didVibrate = false
                     didOpenShare = false
-                    self?.hideGIF()
+                    self?.hideTooltip()
                 case .changed:
                     guard !didOpenShare else {
                         return
@@ -239,22 +245,13 @@ class FeedViewController: UIViewController {
                     } else if translationX > 0 && progress > 0.3 {
                         didOpenShare = true
                         vibrate()
-                        feedGIFCell.imageView.alpha = 1
-                        feedGIFCell.set(imageViewDeltaConstant: 0)
-                        UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
-                            feedGIFCell.layoutIfNeeded()
-                            }.startAnimation()
                         self?.share(with: panGestureRecognizer)
                     }
                 case .ended, .cancelled, .failed:
                     let velocityX = panGestureRecognizer.velocity(in: nil).x
+                    let imageViewAlpha: CGFloat
                     if translationX < 0 {
-                        let completed = progress > 0.5 || velocityX < -500
-                        feedGIFCell.set(imageViewDeltaConstant: completed ? -feedView.frame.width : 0)
-                        UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
-                            feedGIFCell.imageView.alpha = completed ? 0 : 1
-                            feedGIFCell.layoutIfNeeded()
-                            }.startAnimation()
+                        let completed = progress > 0.5 || velocityX < -500                                                
                         if !didVibrate && completed {
                             didVibrate = true
                             vibrate()
@@ -262,17 +259,24 @@ class FeedViewController: UIViewController {
                         if completed {
                             feedViewModel.remove(gif: gif)
                         }
+                        imageViewAlpha = completed ? 0 : 1
+                        feedGIFCell.set(imageViewDeltaConstant: completed ? -feedView.frame.width : 0)
                     } else {
+                        imageViewAlpha = 1
                         feedGIFCell.set(imageViewDeltaConstant: 0)
-                        UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
-                            feedGIFCell.layoutIfNeeded()
-                            }.startAnimation()
                     }
+                    UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
+                        feedGIFCell.imageView.alpha = imageViewAlpha
+                        feedGIFCell.layoutIfNeeded()
+                        }.startAnimation()
                 default:
                     break
                 }
             })
             .disposed(by: feedGIFCell.disposeBag)
+    }
+    
+    private func configureImage(for feedGIFCell: FeedGIFCell, gif: GIF) {
         Observable.concat(gifsCache.image(for: gif),
                           gifsCache.animatedImage(for: gif))
             .observeOn(MainScheduler.instance)
@@ -350,16 +354,18 @@ extension FeedViewController: UISearchBarDelegate {
         defer {
             searchBarShouldBeginEditing = true
         }
-        if searchBarShouldBeginEditing {
-            if feedViewModel.gifsProvider.numberOfObjects() > 0 {
-                let indexPath = IndexPath(row: 0, section: 0)
-                feedView.giftainerCollectionView.scrollToItem(at: indexPath, at: .top, animated: true)
-            }
+        guard searchBarShouldBeginEditing else {
+            return false
         }
-        return searchBarShouldBeginEditing
+        if feedViewModel.gifsProvider.numberOfObjects() > 0 {
+            let indexPath = IndexPath(row: 0, section: 0)
+            feedView.giftainerCollectionView.scrollToItem(at: indexPath, at: .top, animated: true)
+        }
+        return true
     }
     
-    //It is a workaround to prevent the odd animation of the carriage presentation on iOS11 when searchBar is becoming first responder for the first time
+    // It is a workaround to prevent the odd animation of the carriage presentation
+    // when searchBar is becoming first responder for the first time
     func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
         guard searchBar.tintColor == .white else {
             return
@@ -369,6 +375,8 @@ extension FeedViewController: UISearchBarDelegate {
         }
     }
     
+    // This method is called before searchBarShouldBeginEditing, when cancel button is tapped.
+    // Storing searchBarShouldBeginEditing prevents keyboard presentation when cancel button is tapped
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchBarShouldBeginEditing = searchBar.isFirstResponder
     }

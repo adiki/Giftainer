@@ -24,10 +24,10 @@ class GIFsManager {
             .flatMapCompletable(objectsManager.save)
     }
     
-    func fetchAndSaveGIFs(searchText: String) -> Completable {
-        let keywords = searchText.keywords()
+    func fetchAndSaveGIFs(searchText: String) -> Completable {        
         return gifsMetadataFetcher.fetchGIFs(searchText: searchText)
-            .map { gifs in                
+            .map { gifs in
+                let keywords = searchText.keywords()
                 return gifs.map { $0.with(keywords: keywords) }
             }
             .flatMapCompletable(objectsManager.save)

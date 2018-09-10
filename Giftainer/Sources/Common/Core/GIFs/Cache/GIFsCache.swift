@@ -59,13 +59,9 @@ class GIFsCache {
                                     .asObservable()
                             }
                         }
-                        .subscribe(onNext: { event in
-                            observer.onNext(event)
-                        }, onError: { error in
-                            observer.onError(error)
-                        }, onCompleted: {
-                            observer.onCompleted()
-                        })
+                        .subscribe { event in
+                            observer.on(event)
+                        }
                     networkOperationQueue.addOperation(remoteStillOperation)
                     return Disposables.create {
                         remoteStillOperation.cancel()
@@ -99,13 +95,9 @@ class GIFsCache {
                                     .asObservable()
                             }
                         }
-                        .subscribe(onNext: { event in
-                            observer.onNext(event)
-                        }, onError: { error in
-                            observer.onError(error)
-                        }, onCompleted: {
-                            observer.onCompleted()
-                        })
+                        .subscribe { event in
+                            observer.on(event)
+                        }
                     networkOperationQueue.addOperation(remoteMP4Operation)
                     return Disposables.create {
                         remoteMP4Operation.cancel()
@@ -152,8 +144,7 @@ class GIFsCache {
     
     private func cache(image: UIImage, key: String) {
         if let cost = image.cacheCost {
-            let mbCost = cost / 1024 / 1024
-            if mbCost < 7 {
+            if cost.megaBytes < 7 {
                 serialQueue.async(flags: .barrier) { [cache] in
                     cache.setObject(image, forKey: key as NSString, cost: cost)
                 }

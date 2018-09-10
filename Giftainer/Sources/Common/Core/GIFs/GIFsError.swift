@@ -11,4 +11,9 @@ import Foundation
 enum GIFsError: Error {
     case imageNotPersistent
     case mp4NotPersistent
+    case cannotCreateAnimatedImage
+    case operationCancelled
+    case cannotReadDataFromDisk
+    case cannotSaveImageOnDisk
+    case cannotSaveMP4OnDisk
 }

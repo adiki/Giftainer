@@ -23,6 +23,7 @@
 		2C4DBE78213B0400007D2ECB /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C4DBE70213B03CB007D2ECB /* RxCocoa.framework */; };
 		2C4DBE79213B0400007D2ECB /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C4DBE71213B03CB007D2ECB /* RxSwift.framework */; };
 		2C58477F213EE26800B7B80E /* GIFsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C58477E213EE26800B7B80E /* GIFsManager.swift */; };
+		2C73A2352146AC6A008EAE70 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A2342146AC6A008EAE70 /* Int+Extensions.swift */; };
 		2C950A322140402C001F7C34 /* WebAPIMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A312140402C001F7C34 /* WebAPIMethod.swift */; };
 		2C950A342140408A001F7C34 /* WebAPICommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A332140408A001F7C34 /* WebAPICommunicator.swift */; };
 		2C950A3821404790001F7C34 /* GIFsMetadataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A3721404790001F7C34 /* GIFsMetadataFetcher.swift */; };
@@ -101,6 +102,7 @@
 		2C4DBE70213B03CB007D2ECB /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		2C4DBE71213B03CB007D2ECB /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		2C58477E213EE26800B7B80E /* GIFsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFsManager.swift; sourceTree = "<group>"; };
+		2C73A2342146AC6A008EAE70 /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		2C950A312140402C001F7C34 /* WebAPIMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAPIMethod.swift; sourceTree = "<group>"; };
 		2C950A332140408A001F7C34 /* WebAPICommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAPICommunicator.swift; sourceTree = "<group>"; };
 		2C950A3721404790001F7C34 /* GIFsMetadataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFsMetadataFetcher.swift; sourceTree = "<group>"; };
@@ -434,6 +436,7 @@
 			children = (
 				2C9AC2FA214164D80064DBCF /* CGSize+Extensions.swift */,
 				2C950A4E2140592F001F7C34 /* DateFormatter+Extensions.swift */,
+				2C73A2342146AC6A008EAE70 /* Int+Extensions.swift */,
 				2C4A04D3213FEDC800E30977 /* NSFetchedResultsController+Extensions.swift */,
 				2C4DBE5F213AE5AC007D2ECB /* String+Extensions.swift */,
 				2CCF23982145BA450091C561 /* TimeInterval+Extensions.swift */,
@@ -577,6 +580,7 @@
 				2CB98517213C3A7300AD3CF3 /* URL+Extensions.swift in Sources */,
 				2CCD7BE0213ADF5E002299F1 /* UIColor+Extensions.swift in Sources */,
 				2C950A49214054C5001F7C34 /* FailableCodableArray.swift in Sources */,
+				2C73A2352146AC6A008EAE70 /* Int+Extensions.swift in Sources */,
 				2C950A3821404790001F7C34 /* GIFsMetadataFetcher.swift in Sources */,
 				2CCF2387214527330091C561 /* LocalStillOperation.swift in Sources */,
 				2C40E3712141C3A200E0A510 /* GIFsCache.swift in Sources */,

@@ -19,7 +19,6 @@ class LocalMediaOperation: Operation {
     init(url: URL) {
         self.url = url
         self.result = resultPublishSubject.asObservable()        
-        
         super.init()
     }
     

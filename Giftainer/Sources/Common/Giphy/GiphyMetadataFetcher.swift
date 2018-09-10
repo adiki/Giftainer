@@ -19,8 +19,7 @@ class GiphyMetadataFetcher: GIFsMetadataFetcher {
     }
     
     func fetchPopularGIFs() -> Single<[GIF]> {
-        var parameters = makeBaseParameters()
-        parameters["limit"] = 50
+        let parameters = makeBaseParameters()
         let popularGIFsMethod = WebAPIMethod<GiphyResponse>(urlString: baseURLString + "trending",
                                                             parameters: parameters)
         return webAPICommunicator.GET(method: popularGIFsMethod)
@@ -38,6 +37,9 @@ class GiphyMetadataFetcher: GIFsMetadataFetcher {
     }
     
     private func makeBaseParameters() -> [String: Any] {
-        return ["api_key": "0eeeijZDpk8uzzCOsuWthiyEFIzYr8tj"]
+        return [
+            "api_key": "0eeeijZDpk8uzzCOsuWthiyEFIzYr8tj",
+            "limit": 50
+        ]
     }
 }

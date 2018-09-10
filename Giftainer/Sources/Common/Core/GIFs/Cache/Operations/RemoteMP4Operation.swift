@@ -26,32 +26,26 @@ class RemoteMP4Operation: RemoteMediaOperation {
     
     override func execute() {
         disposable = webAPICommunicator.download(urlString: remoteURLString)
-            .do(onNext: { [weak self, resultPublishSubject, fileManager, localURL] event in
-                if fileManager.fileExists(atPath: localURL.path) {
-                    resultPublishSubject.onNext(.url(localURL))
-                    self?.cancel()
-                }
+            .flatMap { [fileManager, localURL] event -> Observable<WebAPICommunicator.DownloadEvent> in
                 if case .url(let url) = event {
                     do {
                         try fileManager.createDirectory(at: localURL.deletingLastPathComponent(),
                                                         withIntermediateDirectories: true,
                                                         attributes: nil)
-                        
                         try fileManager.moveItem(at: url, to: localURL)
                     } catch {
                         Log(error.localizedDescription)
+                        return .error(GIFsError.cannotSaveMP4OnDisk)
                     }
                 }
+                return .just(event)
+            }
+            .do(onDispose: { [weak self] in
+                self?.finish()
             })
-            .subscribe(onNext: { [resultPublishSubject] event in
-                resultPublishSubject.onNext(event)
-            }, onError: { [resultPublishSubject] error in
-                resultPublishSubject.onError(error)
-            }, onCompleted: { [resultPublishSubject] in
-                resultPublishSubject.onCompleted()
-            }, onDisposed: {
-                self.finish()
-            })
+            .subscribe { [weak self] event in
+                self?.resultPublishSubject.on(event)
+            }
     }
     
     override func cancel() {
