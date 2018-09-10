@@ -14,22 +14,32 @@ class LocalMP4Opertation: LocalMediaOperation {
     
     private static let ciContext = EAGLContext(api: .openGLES2).map(CIContext.init) ?? CIContext(options: nil)
     
-    private let maxGIFLength = ProcessInfo.processInfo.physicalMemory / (1024 * 1024) > 2500 ? 33 : 17
+    private let maxGIFLength: Int = {
+        let physicalMemory = ProcessInfo.processInfo.physicalMemory / (1024 * 1024)
+        if physicalMemory > 2500 {
+            return 26
+        } else if physicalMemory > 1500 {
+            return 17
+        } else {
+            return 9
+        }
+    }()
     
-    override func main() {
+    override func main() {        
         let asset = AVAsset(url: url)
         guard let numberOfFrames = computeNumberOfFrames(for: asset),
             let images = extractImages(for: asset, numberOfFrames: numberOfFrames, maxLength: maxGIFLength) else {
+            resultPublishSubject.onError(GIFsError.mp4NotPersistent)
             return
         }
         
         let duration = CMTimeGetSeconds(asset.duration) * Float64(images.count) / Float64(numberOfFrames)
         guard let animatedImage = UIImage.animatedImage(with: images, duration: duration) else {
+            resultPublishSubject.onError(GIFsError.mp4NotPersistent)
             return
         }
         resultPublishSubject.onNext(animatedImage)
-        resultPublishSubject.onCompleted()
-        resultPublishSubject.dispose()
+        resultPublishSubject.onCompleted()        
     }
     
     private func computeNumberOfFrames(for asset: AVAsset) -> Int? {
@@ -87,7 +97,6 @@ class LocalMP4Opertation: LocalMediaOperation {
     private func makeReadyAssetReaderOutput(for asset: AVAsset) -> AVAssetReaderTrackOutput? {
         guard let assetReader = try? AVAssetReader(asset: asset),
             let assetTrack = asset.tracks(withMediaType: .video).first else {
-                resultPublishSubject.onError(GIFsError.mp4NotPersistent)
                 return nil
         }
         let assetReaderOutputSettings = [

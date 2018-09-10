@@ -15,12 +15,16 @@ class FeedViewModel {
     let gifsProvider: AnyObjectsProvider<GIF>
     
     var isLayoutMaximised: Bool {
-        get {
-            return userDefaults.bool(forKey: .isLayoutMaximised)
-        }
-        set {
-            userDefaults.set(newValue, forKey: .isLayoutMaximised)
-        }
+        get { return userDefaults.bool(forKey: .isLayoutMaximised) }
+        set { userDefaults.set(newValue, forKey: .isLayoutMaximised) }
+    }
+    var wasTapTooltipPresented: Bool {
+        get { return userDefaults.bool(forKey: .wasTapTooltipPresented) }
+        set { userDefaults.set(newValue, forKey: .wasTapTooltipPresented) }
+    }
+    var wasSwipeTooltipPresented: Bool {
+        get { return userDefaults.bool(forKey: .wasSwipeTooltipPresented) }
+        set { userDefaults.set(newValue, forKey: .wasSwipeTooltipPresented) }
     }
     let searchText: Observable<String>
     let isNoGIFsInfoHidden: Observable<Bool>
@@ -98,7 +102,7 @@ class FeedViewModel {
                     .catchError { _ in Completable.empty() }
                     .andThen(Observable.just(()))
             }
-            .do(onCompleted: { [weak self] in
+            .do(onDispose: { [weak self] in
                 self?.decreaseNumberOfFetchesInProgress()
             })
             .subscribe()

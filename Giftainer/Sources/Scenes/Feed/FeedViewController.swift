@@ -11,7 +11,7 @@ import RxSwift
 import UIKit
 
 enum FeedSceneEvent {
-    case share(urlString: String, sourceView: UIView)
+    case share(url: URL, sourceView: UIView)
 }
 
 class FeedViewController: UIViewController {
@@ -57,6 +57,7 @@ class FeedViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupSearchBar()
+        setupTooltip()
         setupNoGIFsLabel()
         setupNoResultsLabel()
         setupActivityIndicator()
@@ -97,6 +98,23 @@ class FeedViewController: UIViewController {
         feedViewModel.searchText
             .bind(to: searchBar.rx.text)
             .disposed(by: disposeBag)
+    }
+    
+    private func setupTooltip() {
+        feedView.tooltipButton.rx.tap
+            .bind { [weak self] in
+                self?.hideGIF()
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func hideGIF() {
+        guard feedView.tooltipView.alpha > 0 else {
+            return
+        }
+        UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) { [feedView] in
+            feedView.tooltipView.alpha = 0
+            }.startAnimation()
     }
     
     private func setupNoGIFsLabel() {
@@ -152,6 +170,7 @@ class FeedViewController: UIViewController {
         guard feedView.isPortrait else {
             return
         }
+        hideGIF()
         feedViewModel.isLayoutMaximised = !feedViewModel.isLayoutMaximised
         let giftainerLayout = GiftainerLayout()
         giftainerLayout.numberOfColumns = feedViewModel.isLayoutMaximised ? 1 : 2
@@ -164,6 +183,7 @@ class FeedViewController: UIViewController {
         doubleTapGestureRecognizer.rx.event
             .asDriver()
             .drive(onNext: { [weak self] doubleTapGestureRecognizer in
+                self?.hideGIF()
                 self?.share(with: doubleTapGestureRecognizer)
             })
             .disposed(by: disposeBag)
@@ -195,8 +215,7 @@ class FeedViewController: UIViewController {
         var didOpenShare = false
         feedGIFCell.panGestureRecognizer.rx.event
             .subscribe(onNext: { [weak self, feedView, feedViewModel] panGestureRecognizer in
-                guard self?.feedView.isPortrait == true
-                    && self?.feedViewModel.isLayoutMaximised == true else {
+                guard feedView.isPortrait && feedViewModel.isLayoutMaximised else {
                     return
                 }
                 let translationX = panGestureRecognizer.translation(in: nil).x
@@ -205,6 +224,7 @@ class FeedViewController: UIViewController {
                 case .began:
                     didVibrate = false
                     didOpenShare = false
+                    self?.hideGIF()
                 case .changed:
                     guard !didOpenShare else {
                         return
@@ -230,7 +250,7 @@ class FeedViewController: UIViewController {
                     let velocityX = panGestureRecognizer.velocity(in: nil).x
                     if translationX < 0 {
                         let completed = progress > 0.5 || velocityX < -500
-                        feedGIFCell.set(imageViewDeltaConstant: completed ? -feedView.frame.width : 0)                        
+                        feedGIFCell.set(imageViewDeltaConstant: completed ? -feedView.frame.width : 0)
                         UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
                             feedGIFCell.imageView.alpha = completed ? 0 : 1
                             feedGIFCell.layoutIfNeeded()
@@ -253,7 +273,8 @@ class FeedViewController: UIViewController {
                 }
             })
             .disposed(by: feedGIFCell.disposeBag)
-        Observable.concat(gifsCache.image(for: gif), gifsCache.animatedImage(for: gif))
+        Observable.concat(gifsCache.image(for: gif),
+                          gifsCache.animatedImage(for: gif))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { event in
                 guard feedGIFCell.id == gif.id else {
@@ -285,11 +306,37 @@ class FeedViewController: UIViewController {
                 return
         }
         let gif = feedViewModel.gifsProvider.object(at: indexPath)
-        eventsPublishSubject.onNext(.share(urlString: gif.mp4URLString, sourceView: cell))
+        eventsPublishSubject.onNext(.share(url: gif.localMP4URL, sourceView: cell))
     }
 }
 
 extension FeedViewController: GiftainerLayoutDelegate {
+        
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        showTooltipsIfNeeded()
+    }
+    
+    private func showTooltipsIfNeeded() {
+        guard feedViewModel.gifsProvider.numberOfObjects() > 0 else {
+            return
+        }
+        let showTooltip = { [feedView] in
+            UIViewPropertyAnimator(duration: 0.2, curve: .easeInOut) {
+                feedView.tooltipView.alpha = 1
+                }.startAnimation()
+        }
+        if feedViewModel.isLayoutMaximised && !feedViewModel.wasTapTooltipPresented {
+            feedViewModel.wasTapTooltipPresented = true
+        } else if feedView.isPortrait && !feedViewModel.isLayoutMaximised && !feedViewModel.wasTapTooltipPresented {
+            feedViewModel.wasTapTooltipPresented = true
+            feedView.tooltipLabel.text = "\(String.Single_tap_maximises_layout)\n\(String.Double_tap_shares_gif)"
+            showTooltip()
+        } else if feedView.isPortrait && feedViewModel.isLayoutMaximised && !feedViewModel.wasSwipeTooltipPresented {
+            feedViewModel.wasSwipeTooltipPresented = true
+            feedView.tooltipLabel.text = "\(String.Swipe_right_shares_gif)\n\(String.Swipe_left_deletes_gif)"
+            showTooltip()
+        }
+    }
     
     func collectionView(_ collectionView: UICollectionView, sizeAtIndexPath indexPath: IndexPath) -> CGSize {
         let gif = feedViewModel.gifsProvider.object(at: indexPath)
@@ -317,7 +364,7 @@ extension FeedViewController: UISearchBarDelegate {
         guard searchBar.tintColor == .white else {
             return
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
             self?.searchBar.tintColor = .snapperRocksBlue
         }
     }

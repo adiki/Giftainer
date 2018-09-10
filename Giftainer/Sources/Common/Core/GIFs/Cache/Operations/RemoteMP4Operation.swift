@@ -26,7 +26,11 @@ class RemoteMP4Operation: RemoteMediaOperation {
     
     override func execute() {
         disposable = webAPICommunicator.download(urlString: remoteURLString)
-            .do(onNext: { [fileManager, localURL] event in
+            .do(onNext: { [weak self, resultPublishSubject, fileManager, localURL] event in
+                if fileManager.fileExists(atPath: localURL.path) {
+                    resultPublishSubject.onNext(.url(localURL))
+                    self?.cancel()
+                }
                 if case .url(let url) = event {
                     do {
                         try fileManager.createDirectory(at: localURL.deletingLastPathComponent(),
@@ -45,15 +49,14 @@ class RemoteMP4Operation: RemoteMediaOperation {
                 resultPublishSubject.onError(error)
             }, onCompleted: { [resultPublishSubject] in
                 resultPublishSubject.onCompleted()
-            }, onDisposed: { [resultPublishSubject] in
+            }, onDisposed: {
                 self.finish()
-                resultPublishSubject.dispose()
             })
     }
     
     override func cancel() {
         super.cancel()
         disposable?.dispose()
-        resultPublishSubject.onCompleted()
+        resultPublishSubject.dispose()
     }
 }

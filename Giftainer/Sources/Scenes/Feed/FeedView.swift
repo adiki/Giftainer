@@ -11,6 +11,9 @@ import UIKit
 class FeedView: View {
     
     let giftainerCollectionView = UICollectionView(frame: .zero, collectionViewLayout: GiftainerLayout())
+    let tooltipLabel = UILabel()
+    let tooltipButton = UIButton()
+    let tooltipView = UIView()
     let noGIFsLabel = UILabel()
     let noResultsFoundLabel = UILabel()
     let activityIndicator = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
@@ -27,6 +30,7 @@ class FeedView: View {
     
     override func setupSubviews() {
         setupGiftainerCollectionView()
+        setupTooltip()
         setupNoGIFsLabel()
         setupNoResultsFoundLabel()
     }
@@ -35,6 +39,20 @@ class FeedView: View {
         giftainerCollectionView.backgroundColor = .clear
         giftainerCollectionView.keyboardDismissMode = .onDrag
         giftainerCollectionView.alwaysBounceVertical = true
+    }
+    
+    private func setupTooltip() {
+        tooltipLabel.font = .appMediumFont(ofSize: 18)
+        tooltipLabel.textColor = .snapperRocksBlue
+        tooltipLabel.numberOfLines = 0
+        tooltipLabel.textAlignment = .center
+        
+        tooltipButton.setImage(#imageLiteral(resourceName: "Close").withRenderingMode(.alwaysTemplate), for: .normal)
+        tooltipButton.tintColor = .snapperRocksBlue
+        
+        tooltipView.backgroundColor = .black
+        tooltipView.layer.cornerRadius = 10
+        tooltipView.alpha = 0
     }
     
     private func setupNoGIFsLabel() {
@@ -55,8 +73,20 @@ class FeedView: View {
     }
     
     override func addSubviews() {
+        let margin: CGFloat = 10
         addSubview(giftainerCollectionView,
                    constraints: [pinAllEdges()])
+        tooltipView.addSubview(tooltipLabel,
+                               constraints: [pinVerticalEdges(margin: margin),
+                                             equal(\.leadingAnchor)])
+        tooltipView.addSubview(tooltipButton,
+                               constraints: [pinVerticalEdges(margin: margin),
+                                             equal(\.leadingAnchor, to: tooltipLabel, \.trailingAnchor, constant: margin),
+                                             equal(\.trailingAnchor, constant: -2 * margin)])
+        addSubview(tooltipView,
+                   constraints: [equal(\.safeAreaLayoutGuide.topAnchor, constant: 10),
+                                 equal(\.centerXAnchor),
+                                 equal(\.widthAnchor, multiplier: 0.9)])
         giftainerCollectionView.addSubview(noGIFsLabel,
                                       constraints: [pinToCenter(),
                                                     equal(\.widthAnchor, multiplier: 0.9)])

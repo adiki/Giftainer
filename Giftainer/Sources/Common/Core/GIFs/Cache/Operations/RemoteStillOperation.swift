@@ -21,12 +21,18 @@ class RemoteStillOperation: RemoteMediaOperation {
         super.init(webAPICommunicator: webAPICommunicator,
                    remoteURLString: remoteURLString,
                    localURL: localURL,
-                   fileManager: fileManager)        
+                   fileManager: fileManager)
     }
     
     override func execute() {
         disposable = webAPICommunicator.data(urlString: remoteURLString)
-            .do(onNext: { [fileManager, localURL] event in
+            .do(onNext: { [weak self, resultPublishSubject, fileManager, localURL] event in
+                if fileManager.fileExists(atPath: localURL.path) {
+                    if let data = try? Data(contentsOf: localURL) {
+                        resultPublishSubject.onNext(.data(data))
+                    }                    
+                    self?.cancel()
+                }
                 if case .data(let data) = event {
                     do {
                         try fileManager.createDirectory(at: localURL.deletingLastPathComponent(),
@@ -44,15 +50,14 @@ class RemoteStillOperation: RemoteMediaOperation {
                 resultPublishSubject.onError(error)
             }, onCompleted: { [resultPublishSubject] in
                 resultPublishSubject.onCompleted()
-            }, onDisposed: { [resultPublishSubject] in
-                    self.finish()
-                    resultPublishSubject.dispose()
+            }, onDisposed: {
+                self.finish()                
             })
     }
     
     override func cancel() {
         super.cancel()
         disposable?.dispose()
-        resultPublishSubject.onCompleted()
+        resultPublishSubject.dispose()
     }
 }

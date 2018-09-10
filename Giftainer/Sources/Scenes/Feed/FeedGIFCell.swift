@@ -75,12 +75,12 @@ class FeedGIFCell: CollectionViewCell {
     override func addSubviews() {
         contentView.addSubview(imageView,
                                constraints: [pinAllEdges()])
-        contentView.addSubview(progressView,
-                               constraints: [pinHorizontalEdges(),
-                                             constant(\.heightAnchor, constant: 5),
-                                             equal(\.bottomAnchor)])
-        contentView.addSubview(activityIndicatorView,
-                               constraints: [pinToCenter()])
+        imageView.addSubview(progressView,
+                             constraints: [pinHorizontalEdges(),
+                                           constant(\.heightAnchor, constant: 5),
+                                           equal(\.bottomAnchor)])
+        imageView.addSubview(activityIndicatorView,
+                             constraints: [pinToCenter()])
     }
 }
 

@@ -21,6 +21,6 @@ class RemoteMediaOperation: ConcurrentOperation {
         self.webAPICommunicator = webAPICommunicator
         self.remoteURLString = remoteURLString
         self.localURL = localURL
-        self.fileManager = fileManager
+        self.fileManager = fileManager    
     }
 }

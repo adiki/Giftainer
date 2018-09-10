@@ -32,13 +32,13 @@ class AppFlowCoordinator: FlowCoordinator {
     
     private func handle(feedSceneEvent: FeedSceneEvent) {
         switch feedSceneEvent {
-        case let .share(urlString, sourceView):
-            share(urlString: urlString, sourceView: sourceView)
+        case let .share(url, sourceView):
+            share(url: url, sourceView: sourceView)
         }
     }
     
-    private func share(urlString: String, sourceView: UIView) {
-        let activityViewController = UIActivityViewController(activityItems: [urlString],
+    private func share(url: URL, sourceView: UIView) {
+        let activityViewController = UIActivityViewController(activityItems: [url],
                                                               applicationActivities: nil)
         if let popoverPresentationController = activityViewController.popoverPresentationController {
             popoverPresentationController.sourceView = sourceView

@@ -19,11 +19,12 @@ class LocalMediaOperation: Operation {
     init(url: URL) {
         self.url = url
         self.result = resultPublishSubject.asObservable()        
+        
+        super.init()
     }
     
     override func cancel() {
         super.cancel()
-        resultPublishSubject.onCompleted()
         resultPublishSubject.dispose()
     }
 }

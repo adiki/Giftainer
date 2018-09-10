@@ -48,12 +48,9 @@ extension UIImage {
         guard let cgImage = self.cgImage else {
             return self
         }
-
         let width = cgImage.width
         let height = cgImage.height
-
         let colorSpace = CGColorSpaceCreateDeviceRGB()
-
         if let context = CGContext(data: nil,
                                    width: width,
                                    height: height,
@@ -61,7 +58,6 @@ extension UIImage {
                                    bytesPerRow: width * 4,
                                    space: colorSpace,
                                    bitmapInfo: CGImageAlphaInfo.noneSkipFirst.rawValue) {
-
             context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
             if let drawnImage = context.makeImage() {
                 return UIImage(cgImage: drawnImage)

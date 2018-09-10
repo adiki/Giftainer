@@ -49,16 +49,16 @@ func constant<Anchor>(_ keyPath: KeyPath<UIView, Anchor>, constant: CGFloat, pri
     }]
 }
 
-func pinAllEdges() -> [Constraint] {
-    return pinHorizontalEdges() + pinVerticalEdges()
+func pinAllEdges(margin: CGFloat = 0) -> [Constraint] {
+    return pinHorizontalEdges(margin: margin) + pinVerticalEdges(margin: margin)
 }
 
-func pinHorizontalEdges() -> [Constraint] {
-    return equal(\.leadingAnchor) + equal(\.trailingAnchor)
+func pinHorizontalEdges(margin: CGFloat = 0) -> [Constraint] {
+    return equal(\.leadingAnchor, constant: margin) + equal(\.trailingAnchor, constant: -margin)
 }
 
-func pinVerticalEdges() -> [Constraint] {
-    return equal(\.topAnchor) + equal(\.bottomAnchor)
+func pinVerticalEdges(margin: CGFloat = 0) -> [Constraint] {
+    return equal(\.topAnchor, constant: margin) + equal(\.bottomAnchor, constant: -margin)
 }
 
 func pinToCenter() -> [Constraint] {
