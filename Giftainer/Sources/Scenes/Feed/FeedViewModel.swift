@@ -84,15 +84,17 @@ class FeedViewModel {
             .bind(to: searchTextBehaviorRelay)
             .disposed(by: disposeBag)
         
-        var lastSearchInput = ""
-        searchTextBehaviorRelay            
+        searchTextBehaviorRelay
             .throttle(0.3, scheduler: MainScheduler.instance)
             .distinctUntilChanged()
-            .filter { searchInput in
-                let result = searchInput.count > lastSearchInput.count
-                lastSearchInput = searchInput
-                return result
+            .map { (oldSearchText: "", newSearchText: $0) }
+            .scan((oldSearchText: "", newSearchText: "")) { previous, current in
+                return (oldSearchText: previous.newSearchText, newSearchText: current.newSearchText)
             }
+            .filter { searchInputs in
+                return searchInputs.newSearchText.count > searchInputs.oldSearchText.count
+            }
+            .map { $0.newSearchText }
             .filter { !$0.isEmpty }
             .do(onNext: { [weak self] _ in
                 self?.increaseNumberOfFetchesInProgress()
