@@ -216,7 +216,8 @@ class FeedViewController: UIViewController {
         feedGIFCell.id = gif.id
         
         configurePanGestureRecognizer(for: feedGIFCell, gif: gif)
-        configureImage(for: feedGIFCell, gif: gif)
+        configureRefreshButton(for: feedGIFCell, gif: gif)
+        fetchImage(for: feedGIFCell, gif: gif)
     }
     
     private func configurePanGestureRecognizer(for feedGIFCell: FeedGIFCell, gif: GIF) {
@@ -279,7 +280,17 @@ class FeedViewController: UIViewController {
             .disposed(by: feedGIFCell.disposeBag)
     }
     
-    private func configureImage(for feedGIFCell: FeedGIFCell, gif: GIF) {
+    private func configureRefreshButton(for feedGIFCell: FeedGIFCell, gif: GIF) {
+        feedGIFCell.refreshButton.rx.tap
+            .bind { [weak self] in
+                self?.fetchImage(for: feedGIFCell, gif: gif)
+            }
+            .disposed(by: feedGIFCell.disposeBag)
+    }
+    
+    private func fetchImage(for feedGIFCell: FeedGIFCell, gif: GIF) {
+        feedGIFCell.activityIndicatorView.startAnimating()
+        feedGIFCell.refreshButton.isHidden = true        
         Observable.concat(gifsCache.image(for: gif),
                           gifsCache.animatedImage(for: gif))
             .observeOn(MainScheduler.instance)
@@ -307,6 +318,8 @@ class FeedViewController: UIViewController {
                     return
                 }
                 feedGIFCell.progressView.isHidden = true
+                feedGIFCell.activityIndicatorView.stopAnimating()
+                feedGIFCell.refreshButton.isHidden = false
             })
             .disposed(by: feedGIFCell.disposeBag)
     }

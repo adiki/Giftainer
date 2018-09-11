@@ -19,7 +19,8 @@ class FeedGIFCell: CollectionViewCell {
     }
         
     let imageView = UIImageView()
-    let progressView  = UIProgressView()
+    let progressView = UIProgressView()
+    let refreshButton = UIButton()
     let activityIndicatorView = UIActivityIndicatorView(activityIndicatorStyle: .white)
     
     let panGestureRecognizer = UIPanGestureRecognizer()
@@ -34,6 +35,7 @@ class FeedGIFCell: CollectionViewCell {
         progressView.progress = 0
         progressView.isHidden = true
         activityIndicatorView.startAnimating()
+        refreshButton.isHidden = true
         set(imageViewDeltaConstant: 0)
     }
     
@@ -52,15 +54,15 @@ class FeedGIFCell: CollectionViewCell {
         setupImageView()
         setupProgressView()
         setupActivityIndicatorView()
+        setupRefreshButton()
     }
     
     private func setupImageView() {
         imageView.addGestureRecognizer(panGestureRecognizer)
+        panGestureRecognizer.delegate = self
         imageView.isUserInteractionEnabled = true
         imageView.layer.cornerRadius = 10
-        imageView.clipsToBounds = true
-        panGestureRecognizer.delegate = self
-        
+        imageView.clipsToBounds = true        
     }
     
     private func setupProgressView() {
@@ -72,6 +74,11 @@ class FeedGIFCell: CollectionViewCell {
         activityIndicatorView.startAnimating()
     }
     
+    private func setupRefreshButton() {
+        refreshButton.setImage(#imageLiteral(resourceName: "Refresh"), for: .normal)
+        refreshButton.isHidden = true
+    }
+    
     override func addSubviews() {
         contentView.addSubview(imageView,
                                constraints: [pinAllEdges()])
@@ -81,6 +88,8 @@ class FeedGIFCell: CollectionViewCell {
                                            equal(\.bottomAnchor)])
         imageView.addSubview(activityIndicatorView,
                              constraints: [pinToCenter()])
+        imageView.addSubview(refreshButton,
+                             constraints: [pinAllEdges()])
     }
 }
 
