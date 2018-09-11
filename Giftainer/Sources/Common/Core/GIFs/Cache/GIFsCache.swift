@@ -42,36 +42,36 @@ class GIFsCache {
         if let image = cachedImage(key: gif.localStillURL.path) {
             return Observable.just(.image(image))
         }
-        
         return still(forLocalURL: gif.localStillURL)
             .asObservable()
-            .catchError { [networkOperationQueue, webAPICommunicator, fileManager, logger] _ in
-                return Observable.create({ observer in
-                    let remoteStillOperation = RemoteStillOperation(webAPICommunicator: webAPICommunicator,
-                                                                    remoteURLString: gif.stillURLString,
-                                                                    localURL: gif.localStillURL,
-                                                                    fileManager: fileManager,
-                                                                    logger: logger)
-                    let disposable = remoteStillOperation.result
-                        .flatMap { dataEvent -> Observable<Event> in
-                            switch dataEvent {
-                            case .progress(let progress):
-                                return Observable.just(.progress(progress * 0.1))
-                            case .data:
-                                return self.still(forLocalURL: gif.localStillURL)
-                                    .asObservable()
-                            }
-                        }
-                        .subscribe { event in
-                            observer.on(event)
-                        }
-                    networkOperationQueue.addOperation(remoteStillOperation)
-                    return Disposables.create {
-                        remoteStillOperation.cancel()
-                        disposable.dispose()
+            .catchError { _ in
+                self.downloadImage(for: gif)
+                    .flatMap { dataEvent -> Observable<Event> in
+                    switch dataEvent {
+                    case .progress(let progress):
+                        return Observable.just(.progress(progress * 0.1))
+                    case .data:
+                        return self.still(forLocalURL: gif.localStillURL)
+                            .asObservable()
                     }
-                })
+                }
             }
+    }
+    
+    func downloadImage(for gif: GIF) -> Observable<WebAPICommunicator.DataEvent> {
+        return Observable.create({ [networkOperationQueue, webAPICommunicator, fileManager, logger] observer in
+            let remoteStillOperation = RemoteStillOperation(webAPICommunicator: webAPICommunicator,
+                                                            remoteURLString: gif.stillURLString,
+                                                            localURL: gif.localStillURL,
+                                                            fileManager: fileManager,
+                                                            logger: logger)
+            let disposable = remoteStillOperation.result.subscribe(observer.on)
+            networkOperationQueue.addOperation(remoteStillOperation)
+            return Disposables.create {
+                remoteStillOperation.cancel()
+                disposable.dispose()
+            }
+        })
     }
     
     func animatedImage(for gif: GIF) -> Observable<Event> {
@@ -79,36 +79,36 @@ class GIFsCache {
         if let image = cachedImage(key: gif.localMP4URL.path) {
             return Observable.just(.image(image))
         }
-
         return animatedImage(forLocalURL: gif.localMP4URL)
             .asObservable()
-            .catchError { [networkOperationQueue, webAPICommunicator, fileManager, logger] _ in
-                return Observable.create({ observer in
-                    let remoteMP4Operation = RemoteMP4Operation(webAPICommunicator: webAPICommunicator,
-                                                                remoteURLString: gif.mp4URLString,
-                                                                localURL: gif.localMP4URL,
-                                                                fileManager: fileManager,
-                                                                logger: logger)
-                    let disposable = remoteMP4Operation.result
-                        .flatMap { dataEvent -> Observable<Event> in
-                            switch dataEvent {
-                            case .progress(let progress):
-                                return Observable.just(.progress(0.1 + progress * 0.9))
-                            case .url:
-                                return self.animatedImage(forLocalURL: gif.localMP4URL)
-                                    .asObservable()
-                            }
+            .catchError {  _ in
+                self.downloadAnimatedImage(for: gif)
+                    .flatMap { dataEvent -> Observable<Event> in
+                        switch dataEvent {
+                        case .progress(let progress):
+                            return Observable.just(.progress(0.1 + progress * 0.9))
+                        case .url:
+                            return self.animatedImage(forLocalURL: gif.localMP4URL)
+                                .asObservable()
                         }
-                        .subscribe { event in
-                            observer.on(event)
-                        }
-                    networkOperationQueue.addOperation(remoteMP4Operation)
-                    return Disposables.create {
-                        remoteMP4Operation.cancel()
-                        disposable.dispose()
-                    }
-                })
+                }
+        }                
+    }
+    
+    func downloadAnimatedImage(for gif: GIF) -> Observable<WebAPICommunicator.DownloadEvent> {
+        return Observable.create({ [networkOperationQueue, webAPICommunicator, fileManager, logger] observer in
+            let remoteMP4Operation = RemoteMP4Operation(webAPICommunicator: webAPICommunicator,
+                                                        remoteURLString: gif.mp4URLString,
+                                                        localURL: gif.localMP4URL,
+                                                        fileManager: fileManager,
+                                                        logger: logger)
+            let disposable = remoteMP4Operation.result.subscribe(observer.on)
+            networkOperationQueue.addOperation(remoteMP4Operation)
+            return Disposables.create {
+                remoteMP4Operation.cancel()
+                disposable.dispose()
             }
+        })
     }
     
     private func still(forLocalURL localURL: URL) -> Single<Event> {
@@ -124,12 +124,12 @@ class GIFsCache {
     private func single(for operation: LocalMediaOperation, queue: OperationQueue) -> Single<Event> {
         return Single.create(subscribe: { observer in
             let disposable = operation.result
-                .subscribe(onNext: { [weak self] image in
-                    observer(.success(.image(image)))
+                .do(onNext: { [weak self] image in
                     self?.cache(image: image, key: operation.url.path)
-                }, onError: { error in
-                    observer(.error(error))                    
                 })
+                .asSingle()
+                .map { Event.image($0) }
+                .subscribe(observer)
             queue.addOperation(operation)
             return Disposables.create {
                 disposable.dispose()
@@ -147,11 +147,9 @@ class GIFsCache {
     }
     
     private func cache(image: UIImage, key: String) {
-        if let cost = image.cacheCost {
-            if cost.megaBytes < 7 {
-                serialQueue.async(flags: .barrier) { [cache] in
-                    cache.setObject(image, forKey: key as NSString, cost: cost)
-                }
+        if let cost = image.cacheCost, cost.megaBytes < 7 {
+            serialQueue.async(flags: .barrier) { [cache] in
+                cache.setObject(image, forKey: key as NSString, cost: cost)
             }
         }
     }

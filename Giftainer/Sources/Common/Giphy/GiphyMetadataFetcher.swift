@@ -24,7 +24,6 @@ class GiphyMetadataFetcher: GIFsMetadataFetcher {
                                                             parameters: parameters)
         return webAPICommunicator.GET(method: popularGIFsMethod)
             .map { $0.convert() }
-        
     }
     
     func fetchGIFs(searchText: String) -> Single<[GIF]> {

@@ -101,10 +101,10 @@ class FeedViewModel {
                 gifsManager.fetchAndSaveGIFs(searchText: searchText)
                     .catchError { _ in Completable.empty() }
                     .andThen(Observable.just(()))
-            }
-            .do(onDispose: { [weak self] in
-                self?.decreaseNumberOfFetchesInProgress()
-            })
+                    .do(onDispose: { [weak self] in
+                        self?.decreaseNumberOfFetchesInProgress()
+                    })
+            }            
             .subscribe()
             .disposed(by: disposeBag)
         

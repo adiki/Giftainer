@@ -15,11 +15,14 @@ class WebAPICommunicator: NSObject {
     enum WebAPIError: LocalizedError {
         case invalidURL
         case invalidResponse
+        case downloadFailed
         
         var errorDescription: String? {
             switch self {
             case .invalidURL, .invalidResponse:
                 return .We_have_an_issue_will_get_back_to_you
+            case .downloadFailed:
+                return .Download_failed
             }
         }
     }
@@ -130,13 +133,20 @@ extension WebAPICommunicator: URLSessionDelegate {
     
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         observersQueue.async(flags: .barrier) { [weak self] in
-            guard let (observer, data) = self?.dataObservers[task.taskIdentifier] else {
-                return
+            if error != nil {                
+                if let (observer, _) = self?.dataObservers[task.taskIdentifier] {
+                    observer.onError(WebAPIError.downloadFailed)
+                    self?.dataObservers[task.taskIdentifier] = nil
+                } else if let observer = self?.downloadObservers[task.taskIdentifier] {
+                    observer.onError(WebAPIError.downloadFailed)
+                    self?.downloadObservers[task.taskIdentifier] = nil
+                }
+            } else if let (observer, data) = self?.dataObservers[task.taskIdentifier] {
+                observer.onNext(.progress(1))
+                observer.onNext(.data(data))
+                observer.on(.completed)
+                self?.dataObservers[task.taskIdentifier] = nil                
             }
-            observer.onNext(.progress(1))
-            observer.onNext(.data(data))
-            observer.on(.completed)
-            self?.dataObservers[task.taskIdentifier] = nil
         }
     }
 }
