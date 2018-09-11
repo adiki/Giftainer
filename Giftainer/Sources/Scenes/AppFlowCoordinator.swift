@@ -30,7 +30,7 @@ class AppFlowCoordinator: FlowCoordinator {
             .disposed(by: feedViewController.disposeBag)
     }
     
-    private func handle(feedSceneEvent: FeedSceneEvent) {
+    private func handle(feedSceneEvent: FeedViewController.SceneEvent) {
         switch feedSceneEvent {
         case let .share(url, sourceView):
             share(url: url, sourceView: sourceView)

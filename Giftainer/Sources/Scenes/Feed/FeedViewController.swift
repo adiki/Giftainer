@@ -10,13 +10,13 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-enum FeedSceneEvent {
-    case share(url: URL, sourceView: UIView)
-}
-
 class FeedViewController: UIViewController {
     
-    let events: Observable<FeedSceneEvent>
+    enum SceneEvent {
+        case share(url: URL, sourceView: UIView)
+    }
+    
+    let events: Observable<SceneEvent>
     let disposeBag = DisposeBag()
 
     private let searchBar = UISearchBar()
@@ -25,7 +25,7 @@ class FeedViewController: UIViewController {
                                                                                  objectsProvider: feedViewModel.gifsProvider)
     private let tapGestureRecognizer = UITapGestureRecognizer()
     private let doubleTapGestureRecognizer = UITapGestureRecognizer()
-    private let eventsPublishSubject = PublishSubject<FeedSceneEvent>()
+    private let eventsPublishSubject = PublishSubject<SceneEvent>()
     private let referencesBag = ReferencesBag()
     
     private var feedView: FeedView {
