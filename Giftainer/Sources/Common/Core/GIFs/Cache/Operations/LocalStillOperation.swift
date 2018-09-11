@@ -22,5 +22,6 @@ class LocalStillOperation: LocalMediaOperation {
         } else {
             resultPublishSubject.onError(GIFsError.imageNotPersistent)
         }
+        resultPublishSubject.dispose()
     }
 }

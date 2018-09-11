@@ -43,6 +43,7 @@ class RemoteStillOperation: RemoteMediaOperation {
             }
             .do(onDispose: { [weak self] in
                 self?.finish()
+                self?.resultPublishSubject.dispose()
             })
             .subscribe { [weak self] event in
                 self?.resultPublishSubject.on(event)

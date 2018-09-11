@@ -17,16 +17,19 @@ class LocalMP4Opertation: LocalMediaOperation {
     private let maxGIFLength: Int = {
         let physicalMemoryMegabytes = ProcessInfo.processInfo.physicalMemory.megaBytes
         if physicalMemoryMegabytes > 2500 {
-            return 26
+            return 16
         } else if physicalMemoryMegabytes > 1500 {
-            return 17
+            return 12
         } else {
-            return 9
+            return 6
         }
     }()
     
     override func main() {        
         let asset = AVAsset(url: url)
+        defer {
+            resultPublishSubject.dispose()
+        }
         guard let numberOfFrames = computeNumberOfFrames(for: asset),
             let images = extractImages(for: asset, numberOfFrames: numberOfFrames, maxLength: maxGIFLength) else {
             let error: GIFsError = isCancelled ? .mp4NotPersistent : .operationCancelled
@@ -40,7 +43,7 @@ class LocalMP4Opertation: LocalMediaOperation {
             return
         }
         resultPublishSubject.onNext(animatedImage)
-        resultPublishSubject.onCompleted()        
+        resultPublishSubject.onCompleted()    
     }
     
     private func computeNumberOfFrames(for asset: AVAsset) -> Int? {
