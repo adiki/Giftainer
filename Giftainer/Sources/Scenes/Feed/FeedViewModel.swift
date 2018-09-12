@@ -75,8 +75,8 @@ class FeedViewModel {
             .disposed(by: disposeBag)
     }
     
-    func remove(gif: GIF) {
-        objectsManager.remove(gif: gif)
+    func hide(gif: GIF) {
+        objectsManager.hide(gif: gif)
     }
     
     func accept<O: ObservableType>(searchInput: O) where O.E == String {
@@ -85,7 +85,7 @@ class FeedViewModel {
             .disposed(by: disposeBag)
         
         searchTextBehaviorRelay
-            .throttle(0.3, scheduler: MainScheduler.instance)
+            .debounce(0.3, scheduler: MainScheduler.instance)
             .distinctUntilChanged()
             .map { (oldSearchText: "", newSearchText: $0) }
             .scan((oldSearchText: "", newSearchText: "")) { previous, current in
@@ -111,11 +111,12 @@ class FeedViewModel {
             .disposed(by: disposeBag)
         
         searchTextBehaviorRelay
-            .map { searchText in
+            .map { [defaultGIFPredicate = objectsManager.defaultGIFPredicate] searchText in
                 let keywords = searchText.keywords()
-                let predicates = keywords.map { keyword in
+                var predicates = keywords.map { keyword in
                     NSPredicate(format: "SUBQUERY(keywords, $keyword, $keyword.value CONTAINS[cd] %@).@count > 0", keyword.value)
                 }
+                predicates.append(defaultGIFPredicate)
                 return NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
             }
             .subscribe(onNext: { [gifsProvider] predicate in

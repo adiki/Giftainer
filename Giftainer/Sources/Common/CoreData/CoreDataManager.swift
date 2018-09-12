@@ -10,7 +10,11 @@ import CoreData
 import Foundation
 import RxSwift
 
-class CoreDataManager: ObjectsManager {    
+class CoreDataManager: ObjectsManager {
+    
+    var defaultGIFPredicate: NSPredicate {
+        return NSPredicate(format: "%K == false", #keyPath(CDGIF.isHidden))
+    }
     
     private let persistentContainer: NSPersistentContainer
     private let fileManager: FileManager
@@ -34,7 +38,8 @@ class CoreDataManager: ObjectsManager {
     }
     
     func makeGIFsProvider() -> AnyObjectsProvider<GIF> {
-        let request = CDGIF.sortedFetchRequest        
+        let request = CDGIF.sortedFetchRequest
+        request.predicate = defaultGIFPredicate
         let coreDataObjectsProvider = makeObjectsProvider(with: request)
         return AnyObjectsProvider(objectsProvider: coreDataObjectsProvider)
     }
@@ -52,15 +57,15 @@ class CoreDataManager: ObjectsManager {
         .observeOn(backgroundScheduler)
     }
     
-    func remove(gif: GIF) {
+    func hide(gif: GIF) {
         backgroundContext.performChanges { [weak self, backgroundContext] in
             let cdGIF = CDGIF.findOrCreate(gif: gif, in: backgroundContext)
-            self?.remove(cdGIF: cdGIF)
+            cdGIF.isHidden = true
+            self?.removeFromDisk(gif: gif)
         }
     }
     
-    func remove(cdGIF: CDGIF) {
-        let gif = cdGIF.convert()
+    func removeFromDisk(gif: GIF) {
         do {
             try fileManager.removeItem(at: gif.localStillURL)
         } catch {
@@ -71,7 +76,7 @@ class CoreDataManager: ObjectsManager {
         } catch {
             logger.log(error.localizedDescription)
         }
-        backgroundContext.delete(cdGIF)
+        
     }
     
     private func makeObjectsProvider<T: Convertible>(with request: NSFetchRequest<T>) -> CoreDataObjectsProvider<T> {
@@ -106,7 +111,8 @@ class CoreDataManager: ObjectsManager {
             request.returnsObjectsAsFaults = true
             let oldGIFs = try! backgroundContext.fetch(request)
             for cdOldGIF in oldGIFs {
-                self?.remove(cdGIF: cdOldGIF)
+                self?.removeFromDisk(gif: cdOldGIF.convert())
+                self?.backgroundContext.delete(cdOldGIF)
             }
         }
     }
@@ -132,12 +138,9 @@ class CoreDataManager: ObjectsManager {
     }
     
     private static var managedObjectModel: NSManagedObjectModel = {
-        let modelBundle = Bundle(for: CDGIF.self)
-        let modelDirectoryName = "Giftainer.momd"
+        let modelBundle = Bundle(for: CDGIF.self)        
         let resource = "Giftainer"
-        let omoURL = modelBundle.url(forResource: resource, withExtension: "omo", subdirectory: modelDirectoryName)
-        let momURL = modelBundle.url(forResource: resource, withExtension: "mom", subdirectory: modelDirectoryName)
-        guard let url = omoURL ?? momURL else { fatalError("model version not found") }
+        guard let url = modelBundle.url(forResource: resource, withExtension: "momd") else { fatalError("model version not found") }
         guard let model = NSManagedObjectModel(contentsOf: url) else { fatalError("cannot open model at \(url)") }
         return model
     }()

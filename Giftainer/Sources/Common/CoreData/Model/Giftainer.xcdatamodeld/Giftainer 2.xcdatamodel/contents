@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14135" systemVersion="17G65" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="GIF" representedClassName=".CDGIF" syncable="YES">
+        <attribute name="date" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="height" attributeType="Integer 16" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="id" attributeType="String" syncable="YES"/>
+        <attribute name="isHidden" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="modificationDate" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="mp4URLString" attributeType="String" syncable="YES"/>
+        <attribute name="stillURLString" attributeType="String" syncable="YES"/>
+        <attribute name="width" attributeType="Integer 16" usesScalarValueType="YES" syncable="YES"/>
+        <relationship name="keywords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Keyword" inverseName="gifs" inverseEntity="Keyword" syncable="YES"/>
+    </entity>
+    <entity name="Keyword" representedClassName=".CDKeyword" syncable="YES">
+        <attribute name="value" attributeType="String" syncable="YES"/>
+        <relationship name="gifs" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GIF" inverseName="keywords" inverseEntity="GIF" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="GIF" positionX="-63" positionY="-18" width="128" height="180"/>
+        <element name="Keyword" positionX="-54" positionY="-9" width="128" height="75"/>
+    </elements>
+</model>

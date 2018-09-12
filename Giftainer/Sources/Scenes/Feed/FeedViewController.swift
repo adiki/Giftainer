@@ -261,7 +261,7 @@ class FeedViewController: UIViewController {
                             vibrationPerformer.vibrate()
                         }
                         if completed {
-                            feedViewModel.remove(gif: gif)
+                            feedViewModel.hide(gif: gif)
                         }
                         imageViewAlpha = completed ? 0 : 1
                         feedGIFCell.set(imageViewDeltaConstant: completed ? -feedView.frame.width : 0)

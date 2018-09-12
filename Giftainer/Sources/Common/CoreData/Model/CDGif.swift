@@ -17,6 +17,7 @@ class CDGIF: NSManagedObject, Managed {
     @NSManaged private(set) var height: Int16
     @NSManaged private(set) var mp4URLString: String
     @NSManaged private(set) var stillURLString: String
+    @NSManaged var isHidden: NSNumber
     @NSManaged private(set) var keywords: Set<CDKeyword>
     
     @NSManaged private(set) var modificationDate: NSDate
@@ -41,6 +42,9 @@ class CDGIF: NSManagedObject, Managed {
         }
         if cdGIF.stillURLString != gif.stillURLString {
             cdGIF.stillURLString = gif.stillURLString
+        }
+        if gif.keywords.count > 0 {
+            cdGIF.isHidden = false
         }
         for keyword in gif.keywords {
             let cdKeyword = CDKeyword.findOrCreate(keyword: keyword, in: context)

@@ -11,9 +11,11 @@ import RxSwift
 
 protocol ObjectsManager {
     
+    var defaultGIFPredicate: NSPredicate { get }
+    
     func makeGIFsProvider() -> AnyObjectsProvider<GIF>
     func save(gifs: [GIF]) -> Completable
-    func remove(gif: GIF)
+    func hide(gif: GIF)
     
     static func makeObjectsManager(logger: Logger, completion: @escaping (ObjectsManager) -> Void)
 }

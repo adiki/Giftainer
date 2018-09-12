@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2C01C32921494E6300A44E7E /* Giftainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2CB98518213C3C1B00AD3CF3 /* Giftainer.xcdatamodeld */; };
 		2C0EFA1321426072005D9E60 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0EFA1221426072005D9E60 /* Logger.swift */; };
 		2C0EFA15214273FD005D9E60 /* ConcurrentOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C0EFA14214273FD005D9E60 /* ConcurrentOperation.swift */; };
 		2C1B4DF8213F373000416B2F /* ReferencesBag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C1B4DF7213F373000416B2F /* ReferencesBag.swift */; };
@@ -53,7 +54,6 @@
 		2CB98513213C397400AD3CF3 /* CDGif.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB98512213C397400AD3CF3 /* CDGif.swift */; };
 		2CB98515213C398400AD3CF3 /* CDKeyword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB98514213C398400AD3CF3 /* CDKeyword.swift */; };
 		2CB98517213C3A7300AD3CF3 /* URL+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB98516213C3A7300AD3CF3 /* URL+Extensions.swift */; };
-		2CB9851A213C3C1B00AD3CF3 /* Giftainer.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2CB98518213C3C1B00AD3CF3 /* Giftainer.xcdatamodeld */; };
 		2CB9851C213C3E8800AD3CF3 /* NSManagedObjectContext+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9851B213C3E8800AD3CF3 /* NSManagedObjectContext+Extensions.swift */; };
 		2CB9851F213C435A00AD3CF3 /* GIF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB9851E213C435A00AD3CF3 /* GIF.swift */; };
 		2CB98521213C436E00AD3CF3 /* Keyword.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CB98520213C436E00AD3CF3 /* Keyword.swift */; };
@@ -84,6 +84,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2C01C32821494B9000A44E7E /* Giftainer 2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Giftainer 2.xcdatamodel"; sourceTree = "<group>"; };
 		2C0EFA1221426072005D9E60 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
 		2C0EFA14214273FD005D9E60 /* ConcurrentOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConcurrentOperation.swift; sourceTree = "<group>"; };
 		2C1B4DF7213F373000416B2F /* ReferencesBag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReferencesBag.swift; sourceTree = "<group>"; };
@@ -586,6 +587,7 @@
 				2C40E3712141C3A200E0A510 /* GIFsCache.swift in Sources */,
 				2CB9852B213C56DB00AD3CF3 /* NotificationDescriptor.swift in Sources */,
 				2CCF239721457DBD0091C561 /* RemoteMP4Operation.swift in Sources */,
+				2C01C32921494E6300A44E7E /* Giftainer.xcdatamodeld in Sources */,
 				2C4DBE60213AE5AC007D2ECB /* String+Extensions.swift in Sources */,
 				2CB984FE213C285E00AD3CF3 /* ObjectsProvider.swift in Sources */,
 				2C950A342140408A001F7C34 /* WebAPICommunicator.swift in Sources */,
@@ -601,7 +603,6 @@
 				2CCD7BD3213ADAC3002299F1 /* FeedViewController.swift in Sources */,
 				2CB98521213C436E00AD3CF3 /* Keyword.swift in Sources */,
 				2CB98529213C56C400AD3CF3 /* NotificationCenter+Extensions.swift in Sources */,
-				2CB9851A213C3C1B00AD3CF3 /* Giftainer.xcdatamodeld in Sources */,
 				2CCF23932145749F0091C561 /* RemoteStillOperation.swift in Sources */,
 				2CCF2395214575530091C561 /* RemoteMediaOperation.swift in Sources */,
 				2CCF238B21456A3E0091C561 /* LocalMP4Opertation.swift in Sources */,
@@ -846,9 +847,10 @@
 		2CB98518213C3C1B00AD3CF3 /* Giftainer.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				2C01C32821494B9000A44E7E /* Giftainer 2.xcdatamodel */,
 				2CB98519213C3C1B00AD3CF3 /* Giftainer.xcdatamodel */,
 			);
-			currentVersion = 2CB98519213C3C1B00AD3CF3 /* Giftainer.xcdatamodel */;
+			currentVersion = 2C01C32821494B9000A44E7E /* Giftainer 2.xcdatamodel */;
 			path = Giftainer.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
