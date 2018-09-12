@@ -11,13 +11,18 @@ import UIKit
 
 class LocalStillOperation: LocalMediaOperation {
     
-    override func main() {        
-        if let image = UIImage(contentsOfFile: url.path) {
-            if !isCancelled {
-                resultPublishSubject.onNext(image.decoded())
-                resultPublishSubject.onCompleted()
+    override func main() {
+        if let data = try? Data(contentsOf: url) {
+            if let image = UIImage(data: data) {
+                if !isCancelled {
+                    resultPublishSubject.onNext(image.decoded())
+                    resultPublishSubject.onCompleted()
+                } else {
+                    resultPublishSubject.onError(GIFsError.operationCancelled)
+                }
             } else {
-                resultPublishSubject.onError(GIFsError.operationCancelled)
+                resultPublishSubject.onNext(UIImage())
+                resultPublishSubject.onCompleted()
             }
         } else {
             resultPublishSubject.onError(GIFsError.imageNotPersistent)

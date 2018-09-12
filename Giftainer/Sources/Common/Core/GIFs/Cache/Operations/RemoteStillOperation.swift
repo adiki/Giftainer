@@ -28,7 +28,7 @@ class RemoteStillOperation: RemoteMediaOperation {
     override func execute() {
         disposable = webAPICommunicator.data(urlString: remoteURLString)
             .flatMap { [fileManager, logger, localURL] event -> Observable<WebAPICommunicator.DataEvent> in
-                if case .data(let data) = event {
+                if case .data(let data) = event, !fileManager.fileExists(atPath: localURL.path) {
                     do {
                         try fileManager.createDirectory(at: localURL.deletingLastPathComponent(),
                                                         withIntermediateDirectories: true,

@@ -12,7 +12,7 @@ struct GiphyImages: Codable {
     
     enum CodingKeys: String, CodingKey {
         case mp4 = "original_mp4"
-        case still = "480w_still"
+        case still = "original_still"
     }
     
     let mp4: GiphyMP4

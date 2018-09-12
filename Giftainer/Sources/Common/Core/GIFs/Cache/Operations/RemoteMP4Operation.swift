@@ -28,7 +28,7 @@ class RemoteMP4Operation: RemoteMediaOperation {
     override func execute() {
         disposable = webAPICommunicator.download(urlString: remoteURLString)
             .flatMap { [fileManager, logger, localURL] event -> Observable<WebAPICommunicator.DownloadEvent> in
-                if case .url(let url) = event {
+                if case .url(let url) = event, !fileManager.fileExists(atPath: localURL.path) {
                     do {
                         try fileManager.createDirectory(at: localURL.deletingLastPathComponent(),
                                                         withIntermediateDirectories: true,
