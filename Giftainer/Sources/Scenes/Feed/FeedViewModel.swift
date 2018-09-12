@@ -65,7 +65,15 @@ class FeedViewModel {
             }
     }
     
-    func viewDidLoad() {
+    func didLoad() {
+        fetchAndSavePopularGIFs()
+    }
+    
+    func willEnterForeground() {
+        fetchAndSavePopularGIFs()
+    }
+    
+    private func fetchAndSavePopularGIFs() {
         increaseNumberOfFetchesInProgress()
         gifsManager.fetchAndSavePopularGIFs()
             .do(onDispose: { [weak self] in

@@ -24,6 +24,7 @@
 		2C4DBE78213B0400007D2ECB /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C4DBE70213B03CB007D2ECB /* RxCocoa.framework */; };
 		2C4DBE79213B0400007D2ECB /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C4DBE71213B03CB007D2ECB /* RxSwift.framework */; };
 		2C58477F213EE26800B7B80E /* GIFsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C58477E213EE26800B7B80E /* GIFsManager.swift */; };
+		2C5B48E221497BEF00FB6A73 /* ApplicationNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B48E121497BEF00FB6A73 /* ApplicationNotifications.swift */; };
 		2C73A2352146AC6A008EAE70 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A2342146AC6A008EAE70 /* Int+Extensions.swift */; };
 		2C950A322140402C001F7C34 /* WebAPIMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A312140402C001F7C34 /* WebAPIMethod.swift */; };
 		2C950A342140408A001F7C34 /* WebAPICommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A332140408A001F7C34 /* WebAPICommunicator.swift */; };
@@ -103,6 +104,7 @@
 		2C4DBE70213B03CB007D2ECB /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
 		2C4DBE71213B03CB007D2ECB /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = "<group>"; };
 		2C58477E213EE26800B7B80E /* GIFsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFsManager.swift; sourceTree = "<group>"; };
+		2C5B48E121497BEF00FB6A73 /* ApplicationNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationNotifications.swift; sourceTree = "<group>"; };
 		2C73A2342146AC6A008EAE70 /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
 		2C950A312140402C001F7C34 /* WebAPIMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAPIMethod.swift; sourceTree = "<group>"; };
 		2C950A332140408A001F7C34 /* WebAPICommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAPICommunicator.swift; sourceTree = "<group>"; };
@@ -394,6 +396,7 @@
 		2CB98527213C56A500AD3CF3 /* Notifications */ = {
 			isa = PBXGroup;
 			children = (
+				2C5B48E121497BEF00FB6A73 /* ApplicationNotifications.swift */,
 				2CB9852E213C570400AD3CF3 /* KeyboardNotifications.swift */,
 				2CB98528213C56C400AD3CF3 /* NotificationCenter+Extensions.swift */,
 				2CB9852A213C56DB00AD3CF3 /* NotificationDescriptor.swift */,
@@ -599,6 +602,7 @@
 				2CB9850D213C35B500AD3CF3 /* FeedViewModel.swift in Sources */,
 				2C950A4121404DEF001F7C34 /* GiphyGIF.swift in Sources */,
 				2CCF239121456BC30091C561 /* LocalMediaOperation.swift in Sources */,
+				2C5B48E221497BEF00FB6A73 /* ApplicationNotifications.swift in Sources */,
 				2CB98503213C2AC700AD3CF3 /* Convertible.swift in Sources */,
 				2CCD7BD3213ADAC3002299F1 /* FeedViewController.swift in Sources */,
 				2CB98521213C436E00AD3CF3 /* Keyword.swift in Sources */,

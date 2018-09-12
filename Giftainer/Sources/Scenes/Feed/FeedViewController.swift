@@ -66,9 +66,10 @@ class FeedViewController: UIViewController {
         setupActivityIndicator()
         setupCollectionView()
         setupKeyboardNotifications()
+        setupApplicationNotifications()
         setupTap()
         setupDoubleTap()
-        feedViewModel.viewDidLoad()
+        feedViewModel.didLoad()
     }
     
     override func viewDidLayoutSubviews() {
@@ -208,6 +209,14 @@ class FeedViewController: UIViewController {
                 UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
                     feedView.layoutIfNeeded()
                 }).startAnimation()
+            }
+            .disposed(by: referencesBag)
+    }
+    
+    private func setupApplicationNotifications() {
+        NotificationCenter.default
+            .addObserver { [feedViewModel] (notification: ApplicationWillEnterForegroundNotification) in
+                feedViewModel.willEnterForeground()
             }
             .disposed(by: referencesBag)
     }
