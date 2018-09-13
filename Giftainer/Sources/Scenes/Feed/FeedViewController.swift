@@ -195,22 +195,27 @@ class FeedViewController: UIViewController {
     
     private func setupKeyboardNotifications() {
         NotificationCenter.default
-            .addObserver { [feedView] (notification: KeyboardWillShowNotification) in
-                feedView.giftainerCollectionView.constraint(for: feedView.giftainerCollectionView.bottomAnchor, and: feedView.bottomAnchor)?.constant = -notification.endFrame.height
-                UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
-                    feedView.layoutIfNeeded()
-                }).startAnimation()
+            .addObserver { [weak self] (notification: KeyboardWillShowNotification) in
+                self?.updateGiftainerCollectionViewBottomConstraint(keyboardNotification: notification)
             }
             .disposed(by: referencesBag)
         
         NotificationCenter.default
-            .addObserver { [feedView] (notification: KeyboardWillHideNotification) in
-                feedView.giftainerCollectionView.constraint(for: feedView.giftainerCollectionView.bottomAnchor, and: feedView.bottomAnchor)?.constant = 0
-                UIViewPropertyAnimator(duration: notification.duration, curve: notification.animationOptions.curve, animations: {
-                    feedView.layoutIfNeeded()
-                }).startAnimation()
+            .addObserver { [weak self] (notification: KeyboardWillHideNotification) in
+                self?.updateGiftainerCollectionViewBottomConstraint(keyboardNotification: notification)
             }
             .disposed(by: referencesBag)
+    }
+    
+    private func updateGiftainerCollectionViewBottomConstraint(keyboardNotification: KeyboardNotification) {
+        let collectionViewBottomConstraint = feedView.giftainerCollectionView.constraint(for: feedView.giftainerCollectionView.bottomAnchor,
+                                                                                         and: feedView.bottomAnchor)
+        collectionViewBottomConstraint?.constant = -keyboardNotification.endFrame.height
+        UIViewPropertyAnimator(duration: keyboardNotification.duration,
+                               curve: keyboardNotification.animationOptions.curve) { [feedView] in
+                feedView.layoutIfNeeded()
+            }
+            .startAnimation()
     }
     
     private func setupApplicationNotifications() {

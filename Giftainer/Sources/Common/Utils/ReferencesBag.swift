@@ -10,9 +10,9 @@ import Foundation
 
 class ReferencesBag {
     
-    private var tokens: [AnyObject] = []
+    private var references: [AnyObject] = []
     
-    func append(_ token: AnyObject) {
-        tokens.append(token)
+    func append(_ reference: AnyObject) {
+        references.append(reference)
     }
 }
