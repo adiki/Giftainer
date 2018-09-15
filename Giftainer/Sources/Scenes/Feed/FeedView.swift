@@ -51,7 +51,6 @@ class FeedView: View {
         tooltipButton.tintColor = .snapperRocksBlue
         
         tooltipView.backgroundColor = .black
-        tooltipView.layer.cornerRadius = 10
         tooltipView.alpha = 0
     }
     
@@ -84,9 +83,8 @@ class FeedView: View {
                                              equal(\.leadingAnchor, to: tooltipLabel, \.trailingAnchor, constant: margin),
                                              equal(\.trailingAnchor, constant: -2 * margin)])
         addSubview(tooltipView,
-                   constraints: [equal(\.safeAreaLayoutGuide.topAnchor, constant: 10),
-                                 equal(\.centerXAnchor),
-                                 equal(\.widthAnchor, multiplier: 0.9)])
+                   constraints: [equal(\.safeAreaLayoutGuide.topAnchor),
+                                 pinHorizontalEdges()])
         giftainerCollectionView.addSubview(noGIFsLabel,
                                       constraints: [pinToCenter(),
                                                     equal(\.widthAnchor, multiplier: 0.9)])

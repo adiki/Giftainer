@@ -196,21 +196,25 @@ class FeedViewController: UIViewController {
     private func setupKeyboardNotifications() {
         NotificationCenter.default
             .addObserver { [weak self] (notification: KeyboardWillShowNotification) in
-                self?.updateGiftainerCollectionViewBottomConstraint(keyboardNotification: notification)
+                self?.updateGiftainerCollectionViewBottomConstraint(keyboardNotification: notification,
+                                                                    keyboardPresentation: .show)
             }
             .disposed(by: referencesBag)
         
         NotificationCenter.default
             .addObserver { [weak self] (notification: KeyboardWillHideNotification) in
-                self?.updateGiftainerCollectionViewBottomConstraint(keyboardNotification: notification)
+                self?.updateGiftainerCollectionViewBottomConstraint(keyboardNotification: notification,
+                                                                    keyboardPresentation: .show)
             }
             .disposed(by: referencesBag)
     }
     
-    private func updateGiftainerCollectionViewBottomConstraint(keyboardNotification: KeyboardNotification) {
+    private func updateGiftainerCollectionViewBottomConstraint(keyboardNotification: KeyboardNotification,
+                                                               keyboardPresentation: KeyboardPresentation) {
+        
         let collectionViewBottomConstraint = feedView.giftainerCollectionView.constraint(for: feedView.giftainerCollectionView.bottomAnchor,
                                                                                          and: feedView.bottomAnchor)
-        collectionViewBottomConstraint?.constant = -keyboardNotification.endFrame.height
+        collectionViewBottomConstraint?.constant = keyboardPresentation == .show ? -keyboardNotification.endFrame.height : 0
         UIViewPropertyAnimator(duration: keyboardNotification.duration,
                                curve: keyboardNotification.animationOptions.curve) { [feedView] in
                 feedView.layoutIfNeeded()

@@ -26,6 +26,7 @@
 		2C58477F213EE26800B7B80E /* GIFsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C58477E213EE26800B7B80E /* GIFsManager.swift */; };
 		2C5B48E221497BEF00FB6A73 /* ApplicationNotifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C5B48E121497BEF00FB6A73 /* ApplicationNotifications.swift */; };
 		2C73A2352146AC6A008EAE70 /* Int+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C73A2342146AC6A008EAE70 /* Int+Extensions.swift */; };
+		2C7EC2FD214ABAE300092FDC /* KeyboardPresentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C7EC2FC214ABAE300092FDC /* KeyboardPresentation.swift */; };
 		2C950A322140402C001F7C34 /* WebAPIMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A312140402C001F7C34 /* WebAPIMethod.swift */; };
 		2C950A342140408A001F7C34 /* WebAPICommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A332140408A001F7C34 /* WebAPICommunicator.swift */; };
 		2C950A3821404790001F7C34 /* GIFsMetadataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C950A3721404790001F7C34 /* GIFsMetadataFetcher.swift */; };
@@ -106,6 +107,7 @@
 		2C58477E213EE26800B7B80E /* GIFsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFsManager.swift; sourceTree = "<group>"; };
 		2C5B48E121497BEF00FB6A73 /* ApplicationNotifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationNotifications.swift; sourceTree = "<group>"; };
 		2C73A2342146AC6A008EAE70 /* Int+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Extensions.swift"; sourceTree = "<group>"; };
+		2C7EC2FC214ABAE300092FDC /* KeyboardPresentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardPresentation.swift; sourceTree = "<group>"; };
 		2C950A312140402C001F7C34 /* WebAPIMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAPIMethod.swift; sourceTree = "<group>"; };
 		2C950A332140408A001F7C34 /* WebAPICommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebAPICommunicator.swift; sourceTree = "<group>"; };
 		2C950A3721404790001F7C34 /* GIFsMetadataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GIFsMetadataFetcher.swift; sourceTree = "<group>"; };
@@ -431,6 +433,7 @@
 			children = (
 				2CB98502213C2AC700AD3CF3 /* Convertible.swift */,
 				2CCD7BDC213ADC24002299F1 /* FlowCoordinator.swift */,
+				2C7EC2FC214ABAE300092FDC /* KeyboardPresentation.swift */,
 			);
 			path = Types;
 			sourceTree = "<group>";
@@ -572,6 +575,7 @@
 				2C9AC2F9214129470064DBCF /* GiftainerLayout.swift in Sources */,
 				2CCD7BD5213ADAD5002299F1 /* FeedView.swift in Sources */,
 				2C4A04D4213FEDC800E30977 /* NSFetchedResultsController+Extensions.swift in Sources */,
+				2C7EC2FD214ABAE300092FDC /* KeyboardPresentation.swift in Sources */,
 				2C950A4D21405718001F7C34 /* GiphyStill.swift in Sources */,
 				2CCD7BDD213ADC24002299F1 /* FlowCoordinator.swift in Sources */,
 				2CB98513213C397400AD3CF3 /* CDGif.swift in Sources */,
