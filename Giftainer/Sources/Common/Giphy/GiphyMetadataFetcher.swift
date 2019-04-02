@@ -37,7 +37,7 @@ class GiphyMetadataFetcher: GIFsMetadataFetcher {
     
     private func makeBaseParameters() -> [String: Any] {
         return [
-            "api_key": "0eeeijZDpk8uzzCOsuWthiyEFIzYr8tj",
+            "api_key": "dc6zaTOxFJmzC",
             "limit": 50
         ]
     }
