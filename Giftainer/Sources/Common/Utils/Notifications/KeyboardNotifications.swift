@@ -9,42 +9,27 @@
 import Foundation
 import UIKit
 
-protocol KeyboardNotification {
-    
-    var duration: TimeInterval { get set }
-    var animationOptions: UIViewAnimationOptions { get set }
-    var endFrame: CGRect { get set }
-    
-    var userInfo: [AnyHashable: Any]? { get }
-    
-    init()
-    init(notification: Notification)
-}
+class KeyboardNotification {
+    let duration: TimeInterval
+    let animationOptions: UIViewAnimationOptions
+    let endFrame: CGRect
 
-extension KeyboardNotification {
-    
-    var userInfo: [AnyHashable: Any]? {
-        return nil
+    fileprivate var userInfo: [AnyHashable : Any]? {
+        return [
+            UIKeyboardAnimationDurationUserInfoKey: duration,
+            UIKeyboardAnimationCurveUserInfoKey: animationOptions.rawValue,
+            UIKeyboardFrameEndUserInfoKey: NSValue(cgRect: endFrame),
+        ]
     }
     
-    init(notification: Notification) {
-        self.init()
+    required init(notification: Notification) {
         duration = notification.userInfo![UIKeyboardAnimationDurationUserInfoKey] as! TimeInterval
         animationOptions = UIViewAnimationOptions(rawValue: (notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).uintValue)
-        endFrame = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue        
+        endFrame = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
     }
 }
 
-struct KeyboardWillShowNotification: KeyboardNotification {
-    var duration: TimeInterval
-    var animationOptions: UIViewAnimationOptions
-    var endFrame: CGRect
-    
-    init() {
-        duration = 0
-        animationOptions = .curveLinear
-        endFrame = .zero
-    }
+class KeyboardWillShowNotification: KeyboardNotification {
 }
 
 extension KeyboardWillShowNotification: NotificationDescriptor {
@@ -57,16 +42,7 @@ extension KeyboardWillShowNotification: NotificationDescriptor {
     }
 }
 
-struct KeyboardDidShowNotification: KeyboardNotification {
-    var duration: TimeInterval
-    var animationOptions: UIViewAnimationOptions
-    var endFrame: CGRect
-    
-    init() {
-        duration = 0
-        animationOptions = .curveLinear
-        endFrame = .zero
-    }
+class KeyboardDidShowNotification: KeyboardNotification {
 }
 
 extension KeyboardDidShowNotification: NotificationDescriptor {
@@ -81,16 +57,7 @@ extension KeyboardDidShowNotification: NotificationDescriptor {
 }
 
 
-struct KeyboardWillHideNotification: KeyboardNotification {
-    var duration: TimeInterval
-    var animationOptions: UIViewAnimationOptions
-    var endFrame: CGRect
-    
-    init() {
-        duration = 0
-        animationOptions = .curveLinear
-        endFrame = .zero
-    }
+class KeyboardWillHideNotification: KeyboardNotification {
 }
 
 extension KeyboardWillHideNotification: NotificationDescriptor {
@@ -120,16 +87,7 @@ extension KeyboardDidHideNotification: NotificationDescriptor {
     }
 }
 
-struct KeyboardWillChangeFrameNotification: KeyboardNotification {
-    var duration: TimeInterval
-    var animationOptions: UIViewAnimationOptions
-    var endFrame: CGRect
-    
-    init() {
-        duration = 0
-        animationOptions = .curveLinear
-        endFrame = .zero
-    }
+class KeyboardWillChangeFrameNotification: KeyboardNotification {
 }
 
 extension KeyboardWillChangeFrameNotification: NotificationDescriptor {
