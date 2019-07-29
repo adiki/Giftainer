@@ -14,7 +14,7 @@ class KeyboardNotification {
     let animationOptions: UIViewAnimationOptions
     let endFrame: CGRect
 
-    fileprivate var userInfo: [AnyHashable : Any]? {
+    private var userInfo: [AnyHashable : Any]? {
         return [
             UIKeyboardAnimationDurationUserInfoKey: duration,
             UIKeyboardAnimationCurveUserInfoKey: animationOptions.rawValue,
@@ -27,6 +27,12 @@ class KeyboardNotification {
         animationOptions = UIViewAnimationOptions(rawValue: (notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! NSNumber).uintValue)
         endFrame = (notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue).cgRectValue
     }
+
+    func notification(object: Any?, name: Notification.Name) -> Notification {
+        return Notification(name: name,
+                            object: object,
+                            userInfo: userInfo)
+    }
 }
 
 class KeyboardWillShowNotification: KeyboardNotification {
@@ -36,9 +42,7 @@ extension KeyboardWillShowNotification: NotificationDescriptor {
     static let name = Notification.Name.UIKeyboardWillShow
     
     func notification(object: Any?) -> Notification {
-        return Notification(name: type(of: self).name,
-                            object: object,
-                            userInfo: userInfo)
+        return notification(object: object, name: type(of: self).name)
     }
 }
 
@@ -50,9 +54,7 @@ extension KeyboardDidShowNotification: NotificationDescriptor {
     static let name = Notification.Name.UIKeyboardDidShow
     
     func notification(object: Any?) -> Notification {
-        return Notification(name: type(of: self).name,
-                            object: object,
-                            userInfo: nil)
+        return notification(object: object, name: type(of: self).name)
     }
 }
 
@@ -64,26 +66,18 @@ extension KeyboardWillHideNotification: NotificationDescriptor {
     static let name = Notification.Name.UIKeyboardWillHide
     
     func notification(object: Any?) -> Notification {
-        return Notification(name: type(of: self).name,
-                            object: object,
-                            userInfo: userInfo)
+        return notification(object: object, name: type(of: self).name)
     }
 }
-
-struct KeyboardDidHideNotification {
+class KeyboardDidHideNotification: KeyboardNotification {
 }
 
 extension KeyboardDidHideNotification: NotificationDescriptor {
     
     static let name = Notification.Name.UIKeyboardDidHide
     
-    init(notification: Notification) {
-    }
-    
     func notification(object: Any?) -> Notification {
-        return Notification(name: type(of: self).name,
-                            object: object,
-                            userInfo: nil)
+        return notification(object: object, name: type(of: self).name)
     }
 }
 
@@ -94,8 +88,6 @@ extension KeyboardWillChangeFrameNotification: NotificationDescriptor {
     static let name = Notification.Name.UIKeyboardWillChangeFrame
     
     func notification(object: Any?) -> Notification {
-        return Notification(name: type(of: self).name,
-                            object: object,
-                            userInfo: userInfo)
+        return notification(object: object, name: type(of: self).name)
     }
 }
