@@ -69,6 +69,7 @@ extension KeyboardWillHideNotification: NotificationDescriptor {
         return notification(object: object, name: type(of: self).name)
     }
 }
+
 class KeyboardDidHideNotification: KeyboardNotification {
 }
 
